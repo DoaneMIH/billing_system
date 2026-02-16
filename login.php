@@ -57,19 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - AR NOVALINK Billing System</title>
+    <title>Login - NOVALINK Billing System</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="login-page">
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <div class="logo">
-                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="30" cy="30" r="28" stroke="#002060" stroke-width="4"/>
-                        <path d="M20 30L27 37L40 24" stroke="#002060" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
+                <img src="images/logo.jpg" alt="NovaLink Logo" class="logo">
                 <h1>AR NOVALINK</h1>
                 <p>Billing System</p>
             </div>

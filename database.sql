@@ -53,8 +53,9 @@ CREATE TABLE customers (
     bandwidth_mbps INT,
     monthly_fee DECIMAL(10,2),
     installation_date DATE,
+    date_connected DATE,
     disconnection_date DATE NULL,
-    status ENUM('active', 'disconnected', 'suspended') DEFAULT 'active',
+    status ENUM('active', 'disconnected', 'hold_disconnection') DEFAULT 'active',
     router_serial VARCHAR(100),
     code_number VARCHAR(50),
     remarks TEXT,
@@ -78,12 +79,15 @@ CREATE TABLE billings (
     cable_fee DECIMAL(10,2) DEFAULT 0.00,
     service_fee DECIMAL(10,2) DEFAULT 0.00,
     material_fee DECIMAL(10,2) DEFAULT 0.00,
+    previous_balance DECIMAL(10,2) DEFAULT 0.00,
     total_amount DECIMAL(10,2) NOT NULL,
     discount DECIMAL(10,2) DEFAULT 0.00,
     net_amount DECIMAL(10,2) NOT NULL,
     status ENUM('unpaid', 'paid', 'partial') DEFAULT 'unpaid',
     due_date DATE,
+    auto_generated TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE,
     UNIQUE KEY unique_customer_month (customer_id, billing_month, billing_year),
     INDEX idx_customer (customer_id),
@@ -150,56 +154,67 @@ INSERT INTO packages (package_name, bandwidth_mbps, monthly_fee, description) VA
 ('Package 5', 200, 1999.00, '200 Mbps Ultimate Package');
 
 -- Insert Sample Customers (5 customers demonstrating all features)
-INSERT INTO customers (account_number, subscriber_name, account_name, address, area_id, tel_no, package_id, bandwidth_mbps, monthly_fee, installation_date, router_serial, code_number, status, remarks) VALUES
+INSERT INTO customers (account_number, subscriber_name, account_name, address, area_id, tel_no, package_id, bandwidth_mbps, monthly_fee, installation_date, date_connected, router_serial, code_number, status, remarks) VALUES
 -- Customer 1: Active customer with paid bills
-('ACC-001', 'DELA CRUZ, JUAN', 'Juan dela Cruz', 'Purok 1, Barangay 1, Passi City', 1, '09171234567', 2, 50, 899.00, '2024-01-15', 'RTR-001-2024', 'C001', 'active', 'Regular paying customer'),
+('ACC-001', 'DELA CRUZ, JUAN', 'Juan dela Cruz', 'Purok 1, Barangay 1, Passi City', 1, '09171234567', 2, 50, 899.00, '2024-01-15', '2024-01-15', 'RTR-001-2024', 'C001', 'active', 'Regular paying customer'),
 
 -- Customer 2: Active customer with unpaid bills (overdue)
-('ACC-002', 'SANTOS, MARIA', 'Maria Santos', 'Purok 3, Barangay 2, Passi City', 2, '09182345678', 1, 25, 599.00, '2024-02-01', 'RTR-002-2024', 'C002', 'active', 'Has overdue payments'),
+('ACC-002', 'SANTOS, MARIA', 'Maria Santos', 'Purok 3, Barangay 2, Passi City', 2, '09182345678', 1, 25, 599.00, '2024-02-01', '2024-02-01', 'RTR-002-2024', 'C002', 'active', 'Has overdue payments'),
 
 -- Customer 3: Active customer with partial payment
-('ACC-003', 'REYES, PEDRO', 'Pedro Reyes', 'Zone 2, Poblacion, Passi City', 4, '09193456789', 3, 100, 1299.00, '2024-03-10', 'RTR-003-2024', 'C003', 'active', 'Premium customer - partial payment'),
+('ACC-003', 'REYES, PEDRO', 'Pedro Reyes', 'Zone 2, Poblacion, Passi City', 4, '09193456789', 3, 100, 1299.00, '2024-03-10', '2024-03-10', 'RTR-003-2024', 'C003', 'active', 'Premium customer - partial payment'),
 
 -- Customer 4: Recently installed, all paid
-('ACC-004', 'GARCIA, ANNA', 'Anna Garcia', 'Sitio Maharlika, San Jose, Passi City', 5, '09204567890', 4, 150, 1599.00, '2025-12-01', 'RTR-004-2025', 'C004', 'active', 'New installation - December 2025'),
+('ACC-004', 'GARCIA, ANNA', 'Anna Garcia', 'Sitio Maharlika, San Jose, Passi City', 5, '09204567890', 4, 150, 1599.00, '2025-12-01', '2025-12-01', 'RTR-004-2025', 'C004', 'active', 'New installation - December 2025'),
 
--- Customer 5: Suspended account (unpaid for 2 months)
-('ACC-005', 'LOPEZ, RICARDO', 'Ricardo Lopez', 'Purok 5, San Isidro, Passi City', 6, '09215678901', 2, 50, 899.00, '2024-06-15', 'RTR-005-2024', 'C005', 'suspended', 'Suspended due to non-payment');
+-- Customer 5: Disconnected account (unpaid for 2 months)
+('ACC-005', 'LOPEZ, RICARDO', 'Ricardo Lopez', 'Purok 5, San Isidro, Passi City', 6, '09215678901', 2, 50, 899.00, '2024-06-15', '2024-06-15', 'RTR-005-2024', 'C005', 'disconnected', 'Disconnected due to non-payment'),
+
+-- Customer 6: Hold Disconnection - has unpaid but given grace period
+('ACC-006', 'MARTINEZ, ELENA', 'Elena Martinez', 'Purok 2, Barangay 1, Passi City', 1, '09226789012', 2, 50, 899.00, '2024-05-20', '2024-05-20', 'RTR-006-2024', 'C006', 'hold_disconnection', 'Grace period for payment - balance carries over');
+
+-- Update disconnection dates for disconnected customer
+UPDATE customers SET disconnection_date = '2025-12-15' WHERE account_number = 'ACC-005';
 
 -- Insert Billings for Sample Customers
 -- Customer 1 (DELA CRUZ): All paid for December 2025 and January 2026
-INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, total_amount, discount, net_amount, status, due_date) VALUES
-(1, 12, 2025, 899.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'paid', '2025-12-10'),
-(1, 1, 2026, 899.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'paid', '2026-01-10'),
-(1, 2, 2026, 899.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'unpaid', '2026-02-10');
+INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, previous_balance, total_amount, discount, net_amount, status, due_date) VALUES
+(1, 12, 2025, 899.00, 0.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'paid', '2025-12-31'),
+(1, 1, 2026, 899.00, 0.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'paid', '2026-01-31'),
+(1, 2, 2026, 899.00, 0.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'unpaid', '2026-02-28');
 
--- Customer 2 (SANTOS): Unpaid for November, December 2025, January 2026 (OVERDUE)
-INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, total_amount, discount, net_amount, status, due_date) VALUES
-(2, 11, 2025, 599.00, 0.00, 0.00, 599.00, 0.00, 599.00, 'unpaid', '2025-11-10'),
-(2, 12, 2025, 599.00, 0.00, 0.00, 599.00, 0.00, 599.00, 'unpaid', '2025-12-10'),
-(2, 1, 2026, 599.00, 0.00, 0.00, 599.00, 0.00, 599.00, 'unpaid', '2026-01-10'),
-(2, 2, 2026, 599.00, 0.00, 0.00, 599.00, 0.00, 599.00, 'unpaid', '2026-02-10');
+-- Customer 2 (SANTOS): Unpaid with balance carryover (OVERDUE)
+INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, previous_balance, total_amount, discount, net_amount, status, due_date) VALUES
+(2, 11, 2025, 599.00, 0.00, 0.00, 0.00, 599.00, 0.00, 599.00, 'unpaid', '2025-11-30'),
+(2, 12, 2025, 599.00, 0.00, 0.00, 599.00, 1198.00, 0.00, 1198.00, 'unpaid', '2025-12-31'),
+(2, 1, 2026, 599.00, 0.00, 0.00, 1198.00, 1797.00, 0.00, 1797.00, 'unpaid', '2026-01-31'),
+(2, 2, 2026, 599.00, 0.00, 0.00, 1797.00, 2396.00, 0.00, 2396.00, 'unpaid', '2026-02-28');
 
--- Customer 3 (REYES): Partial payment for January 2026, plus installation fee
-INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, material_fee, total_amount, discount, net_amount, status, due_date) VALUES
-(3, 11, 2025, 1299.00, 0.00, 0.00, 0.00, 1299.00, 0.00, 1299.00, 'paid', '2025-11-10'),
-(3, 12, 2025, 1299.00, 0.00, 0.00, 0.00, 1299.00, 0.00, 1299.00, 'paid', '2025-12-10'),
-(3, 1, 2026, 1299.00, 0.00, 100.00, 0.00, 1399.00, 0.00, 1399.00, 'partial', '2026-01-10'),
-(3, 2, 2026, 1299.00, 0.00, 0.00, 0.00, 1299.00, 0.00, 1299.00, 'unpaid', '2026-02-10');
+-- Customer 3 (REYES): Partial payment for January 2026
+INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, material_fee, previous_balance, total_amount, discount, net_amount, status, due_date) VALUES
+(3, 11, 2025, 1299.00, 0.00, 0.00, 0.00, 0.00, 1299.00, 0.00, 1299.00, 'paid', '2025-11-30'),
+(3, 12, 2025, 1299.00, 0.00, 0.00, 0.00, 0.00, 1299.00, 0.00, 1299.00, 'paid', '2025-12-31'),
+(3, 1, 2026, 1299.00, 0.00, 100.00, 0.00, 0.00, 1399.00, 0.00, 1399.00, 'partial', '2026-01-31'),
+(3, 2, 2026, 1299.00, 0.00, 0.00, 0.00, 599.00, 1898.00, 0.00, 1898.00, 'unpaid', '2026-02-28');
 
 -- Customer 4 (GARCIA): New customer - December and January paid
-INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, material_fee, total_amount, discount, net_amount, status, due_date) VALUES
-(4, 12, 2025, 1599.00, 0.00, 0.00, 500.00, 2099.00, 0.00, 2099.00, 'paid', '2025-12-10'),
-(4, 1, 2026, 1599.00, 0.00, 0.00, 0.00, 1599.00, 0.00, 1599.00, 'paid', '2026-01-10'),
-(4, 2, 2026, 1599.00, 0.00, 0.00, 0.00, 1599.00, 0.00, 1599.00, 'unpaid', '2026-02-10');
+INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, material_fee, previous_balance, total_amount, discount, net_amount, status, due_date) VALUES
+(4, 12, 2025, 1599.00, 0.00, 0.00, 500.00, 0.00, 2099.00, 0.00, 2099.00, 'paid', '2025-12-31'),
+(4, 1, 2026, 1599.00, 0.00, 0.00, 0.00, 0.00, 1599.00, 0.00, 1599.00, 'paid', '2026-01-31'),
+(4, 2, 2026, 1599.00, 0.00, 0.00, 0.00, 0.00, 1599.00, 0.00, 1599.00, 'unpaid', '2026-02-28');
 
--- Customer 5 (LOPEZ): Suspended - unpaid for December and January
-INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, total_amount, discount, net_amount, status, due_date) VALUES
-(5, 10, 2025, 899.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'paid', '2025-10-10'),
-(5, 11, 2025, 899.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'paid', '2025-11-10'),
-(5, 12, 2025, 899.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'unpaid', '2025-12-10'),
-(5, 1, 2026, 899.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'unpaid', '2026-01-10'),
-(5, 2, 2026, 899.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'unpaid', '2026-02-10');
+-- Customer 5 (LOPEZ): Disconnected - billing stopped after disconnection
+INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, previous_balance, total_amount, discount, net_amount, status, due_date) VALUES
+(5, 10, 2025, 899.00, 0.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'paid', '2025-10-31'),
+(5, 11, 2025, 899.00, 0.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'paid', '2025-11-30'),
+(5, 12, 2025, 899.00, 0.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'unpaid', '2025-12-31');
+-- No billing after December because disconnected on 2025-12-15
+
+-- Customer 6 (MARTINEZ): Hold Disconnection - balance carries over
+INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, previous_balance, total_amount, discount, net_amount, status, due_date) VALUES
+(6, 12, 2025, 899.00, 0.00, 0.00, 0.00, 899.00, 0.00, 899.00, 'unpaid', '2025-12-31'),
+(6, 1, 2026, 899.00, 0.00, 0.00, 899.00, 1798.00, 0.00, 1798.00, 'unpaid', '2026-01-31'),
+(6, 2, 2026, 899.00, 0.00, 0.00, 1798.00, 2697.00, 0.00, 2697.00, 'unpaid', '2026-02-28');
 
 -- Insert Sample Payments
 -- Customer 1 payments (all paid on time)

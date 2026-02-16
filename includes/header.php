@@ -1,10 +1,7 @@
 <header class="main-header">
     <div class="header-content">
         <div class="header-logo">
-            <svg width="40" height="40" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="30" cy="30" r="28" stroke="#ffffff" stroke-width="4"/>
-                <path d="M20 30L27 37L40 24" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img src="images/logo.jpg" alt="NovaLink Logo" class="logo">
             <h1>AR NOVALINK Billing System</h1>
         </div>
         <div class="header-user">

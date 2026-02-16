@@ -51,6 +51,22 @@ $total_customers = 0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unpaid Bills - AR NOVALINK Billing System</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        @media print {
+            .no-print, .main-header, .sidebar, .filter-section, .btn {
+                display: none !important;
+            }
+            .container {
+                display: block !important;
+            }
+            .main-content {
+                padding: 0 !important;
+            }
+            body {
+                background: white !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -65,7 +81,7 @@ $total_customers = 0;
             </div>
             
             <div class="table-container">
-                <div class="table-header">
+                <div class="table-header no-print">
                     <h2>Filter Unpaid Bills</h2>
                     <button onclick="window.print()" class="btn btn-primary">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -77,7 +93,7 @@ $total_customers = 0;
                     </button>
                 </div>
                 
-                <div style="padding: 20px; border-bottom: 1px solid var(--border-color);">
+                <div style="padding: 20px; border-bottom: 1px solid var(--border-color);" class="filter-section no-print">
                     <form method="GET" action="" class="filter-group">
                         <select name="area">
                             <option value="0">All Areas/Barangays</option>

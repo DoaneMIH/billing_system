@@ -4,44 +4,13 @@ check_permission('accounting');
 
 $conn = getDBConnection();
 
-// Get date range
+// Get filters
+$report_type = isset($_GET['report_type']) ? sanitize_input($_GET['report_type']) : 'monthly_billing';
 $start_date = isset($_GET['start_date']) ? sanitize_input($_GET['start_date']) : date('Y-m-01');
 $end_date = isset($_GET['end_date']) ? sanitize_input($_GET['end_date']) : date('Y-m-d');
+$month_filter = isset($_GET['month']) ? intval($_GET['month']) : date('n');
+$year_filter = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 $area_filter = isset($_GET['area']) ? intval($_GET['area']) : 0;
-
-// Get payment summary
-$sql = "SELECT 
-        COUNT(DISTINCT p.payment_id) as total_payments,
-        COUNT(DISTINCT p.customer_id) as unique_customers,
-        SUM(p.amount_paid) as total_collected,
-        SUM(CASE WHEN p.payment_method = 'cash' THEN p.amount_paid ELSE 0 END) as cash_payments,
-        SUM(CASE WHEN p.payment_method = 'check' THEN p.amount_paid ELSE 0 END) as check_payments,
-        SUM(CASE WHEN p.payment_method = 'online' THEN p.amount_paid ELSE 0 END) as online_payments
-        FROM payments p
-        JOIN customers c ON p.customer_id = c.customer_id
-        WHERE p.payment_date BETWEEN '$start_date' AND '$end_date'";
-
-if ($area_filter > 0) {
-    $sql .= " AND c.area_id = $area_filter";
-}
-
-$summary = $conn->query($sql)->fetch_assoc();
-
-// Get detailed payments
-$sql = "SELECT p.*, c.subscriber_name, c.account_number, a.area_name, 
-        b.billing_month, b.billing_year
-        FROM payments p
-        JOIN customers c ON p.customer_id = c.customer_id
-        JOIN billings b ON p.billing_id = b.billing_id
-        LEFT JOIN areas a ON c.area_id = a.area_id
-        WHERE p.payment_date BETWEEN '$start_date' AND '$end_date'";
-
-if ($area_filter > 0) {
-    $sql .= " AND c.area_id = $area_filter";
-}
-
-$sql .= " ORDER BY p.payment_date DESC, p.created_at DESC";
-$payments = $conn->query($sql);
 
 // Get areas for filter
 $areas = $conn->query("SELECT * FROM areas ORDER BY area_name");
@@ -53,6 +22,60 @@ $areas = $conn->query("SELECT * FROM areas ORDER BY area_name");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports - AR NOVALINK Billing System</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white;
+            }
+            .report-container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .main-header {
+                display: none !important;
+            }
+            .container {
+                display: block !important;
+            }
+            .sidebar {
+                display: none !important;
+            }
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
+        
+        .report-container {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        
+        .report-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+        
+        .report-header h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .report-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -61,33 +84,71 @@ $areas = $conn->query("SELECT * FROM areas ORDER BY area_name");
         <?php include 'includes/sidebar.php'; ?>
         
         <main class="main-content">
-            <div class="page-header">
+            <div class="page-header no-print">
                 <h1>Reports & Analytics</h1>
-                <p>Generate payment and billing reports</p>
+                <p>Generate comprehensive reports with filters</p>
             </div>
             
-            <div class="widget mb-3">
+            <!-- Report Type Selection -->
+            <div class="widget mb-3 no-print">
+                <div class="widget-header">
+                    <h2>Select Report Type</h2>
+                </div>
+                <div class="widget-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="report_type">Report Type</label>
+                            <select id="report_type" onchange="window.location.href='reports.php?report_type=' + this.value">
+                                <option value="monthly_billing" <?php echo $report_type == 'monthly_billing' ? 'selected' : ''; ?>>Monthly Billing Report</option>
+                                <option value="monthly_sales" <?php echo $report_type == 'monthly_sales' ? 'selected' : ''; ?>>Monthly Sales Report</option>
+                                <option value="unpaid_accounts" <?php echo $report_type == 'unpaid_accounts' ? 'selected' : ''; ?>>Unpaid Accounts Report</option>
+                                <option value="for_disconnection" <?php echo $report_type == 'for_disconnection' ? 'selected' : ''; ?>>Customers for Disconnection</option>
+                                <option value="last_payment" <?php echo $report_type == 'last_payment' ? 'selected' : ''; ?>>Last Payment Dates Report</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="widget mb-3 no-print">
                 <div class="widget-header">
                     <h2>Report Filters</h2>
                 </div>
                 <div class="widget-content">
                     <form method="GET" action="">
+                        <input type="hidden" name="report_type" value="<?php echo $report_type; ?>">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="start_date">Start Date</label>
-                                <input type="date" id="start_date" name="start_date" value="<?php echo $start_date; ?>">
+                                <label for="month">Month</label>
+                                <select id="month" name="month">
+                                    <?php for ($m = 1; $m <= 12; $m++): ?>
+                                    <option value="<?php echo $m; ?>" <?php echo $m == $month_filter ? 'selected' : ''; ?>>
+                                        <?php echo get_month_name($m); ?>
+                                    </option>
+                                    <?php endfor; ?>
+                                </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="end_date">End Date</label>
-                                <input type="date" id="end_date" name="end_date" value="<?php echo $end_date; ?>">
+                                <label for="year">Year</label>
+                                <select id="year" name="year">
+                                    <?php for ($y = date('Y'); $y >= date('Y') - 3; $y--): ?>
+                                    <option value="<?php echo $y; ?>" <?php echo $y == $year_filter ? 'selected' : ''; ?>>
+                                        <?php echo $y; ?>
+                                    </option>
+                                    <?php endfor; ?>
+                                </select>
                             </div>
                             
                             <div class="form-group">
                                 <label for="area">Area/Barangay</label>
                                 <select id="area" name="area">
                                     <option value="0">All Areas</option>
-                                    <?php while ($area = $areas->fetch_assoc()): ?>
+                                    <?php 
+                                    $areas->data_seek(0);
+                                    while ($area = $areas->fetch_assoc()): 
+                                    ?>
                                     <option value="<?php echo $area['area_id']; ?>" <?php echo $area_filter == $area['area_id'] ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($area['area_name']); ?>
                                     </option>
@@ -97,112 +158,35 @@ $areas = $conn->query("SELECT * FROM areas ORDER BY area_name");
                             
                             <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px;">
                                 <button type="submit" class="btn btn-primary">Generate Report</button>
-                                <button type="button" onclick="window.print()" class="btn btn-secondary">Print</button>
+                                <button type="button" onclick="window.print()" class="btn btn-secondary">Print / PDF</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
             
-            <div class="stats-grid mb-3">
-                <div class="stat-card">
-                    <div class="stat-icon blue">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                            <line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
-                    </div>
-                    <div class="stat-details">
-                        <h3><?php echo number_format($summary['total_payments']); ?></h3>
-                        <p>Total Payments</p>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon green">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                        </svg>
-                    </div>
-                    <div class="stat-details">
-                        <h3><?php echo number_format($summary['unique_customers']); ?></h3>
-                        <p>Paying Customers</p>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon orange">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="1" x2="12" y2="23"/>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                        </svg>
-                    </div>
-                    <div class="stat-details">
-                        <h3><?php echo format_currency($summary['total_collected']); ?></h3>
-                        <p>Total Collected</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="widget mb-3">
-                <div class="widget-header">
-                    <h2>Payment Method Breakdown</h2>
-                </div>
-                <div class="widget-content">
-                    <div class="form-row">
-                        <div>
-                            <strong>Cash:</strong> <?php echo format_currency($summary['cash_payments']); ?>
-                        </div>
-                        <div>
-                            <strong>Check:</strong> <?php echo format_currency($summary['check_payments']); ?>
-                        </div>
-                        <div>
-                            <strong>Online:</strong> <?php echo format_currency($summary['online_payments']); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="table-container">
-                <div class="table-header">
-                    <h2>Payment Transactions (<?php echo date('M d, Y', strtotime($start_date)); ?> - <?php echo date('M d, Y', strtotime($end_date)); ?>)</h2>
-                </div>
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>OR Number</th>
-                            <th>Customer</th>
-                            <th>Account #</th>
-                            <th>Area</th>
-                            <th>Period</th>
-                            <th>Amount</th>
-                            <th>Method</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if ($payments->num_rows > 0): ?>
-                            <?php while ($row = $payments->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo date('M d, Y', strtotime($row['payment_date'])); ?></td>
-                                <td><?php echo htmlspecialchars($row['or_number']); ?></td>
-                                <td><?php echo htmlspecialchars($row['subscriber_name']); ?></td>
-                                <td><?php echo htmlspecialchars($row['account_number']); ?></td>
-                                <td><?php echo htmlspecialchars($row['area_name'] ?? 'N/A'); ?></td>
-                                <td><?php echo get_month_name($row['billing_month']) . ' ' . $row['billing_year']; ?></td>
-                                <td><?php echo format_currency($row['amount_paid']); ?></td>
-                                <td><?php echo ucfirst($row['payment_method']); ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="8" class="text-center">No payments found for selected period</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            <!-- Report Content -->
+            <div class="report-container">
+                <?php
+                // Include appropriate report based on selection
+                switch ($report_type) {
+                    case 'monthly_billing':
+                        include 'monthly_billing_report.php';
+                        break;
+                    case 'monthly_sales':
+                        include 'monthly_sales_report.php';
+                        break;
+                    case 'unpaid_accounts':
+                        include 'unpaid_accounts_report.php';
+                        break;
+                    case 'for_disconnection':
+                        include 'for_disconnection_report.php';
+                        break;
+                    case 'last_payment':
+                        include 'last_payment_report.php';
+                        break;
+                }
+                ?>
             </div>
         </main>
     </div>

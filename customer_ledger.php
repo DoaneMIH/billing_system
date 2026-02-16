@@ -27,6 +27,20 @@ if (!$customer) {
     exit();
 }
 
+// Calculate total months disconnected
+$total_months_disconnected = 0;
+if ($customer['disconnection_date'] && $customer['date_connected']) {
+    $disconnect_date = new DateTime($customer['disconnection_date']);
+    $today = new DateTime();
+    $interval = $disconnect_date->diff($today);
+    $total_months_disconnected = ($interval->y * 12) + $interval->m;
+}
+
+// Get last payment date
+$last_payment_result = $conn->query("SELECT MAX(payment_date) as last_payment FROM payments WHERE customer_id = $customer_id");
+$last_payment_row = $last_payment_result->fetch_assoc();
+$last_payment_date = $last_payment_row['last_payment'];
+
 // Get billing history
 $billings = $conn->query("SELECT b.*, 
     (SELECT SUM(amount_paid) FROM payments WHERE billing_id = b.billing_id) as total_paid
@@ -69,7 +83,7 @@ $total_balance = 0;
                             <strong>Account Number:</strong> <?php echo htmlspecialchars($customer['account_number']); ?>
                         </div>
                         <div>
-                            <strong>Name:</strong> <?php echo htmlspecialchars($customer['subscriber_name']); ?>
+                            <strong>Full Name:</strong> <?php echo htmlspecialchars($customer['subscriber_name']); ?>
                         </div>
                     </div>
                     <div class="form-row mt-1">
@@ -77,26 +91,41 @@ $total_balance = 0;
                             <strong>Address:</strong> <?php echo htmlspecialchars($customer['address']); ?>
                         </div>
                         <div>
-                            <strong>Area:</strong> <?php echo htmlspecialchars($customer['area_name'] ?? 'N/A'); ?>
+                            <strong>Area/Barangay:</strong> <?php echo htmlspecialchars($customer['area_name'] ?? 'N/A'); ?>
                         </div>
                     </div>
                     <div class="form-row mt-1">
                         <div>
-                            <strong>Package:</strong> <?php echo htmlspecialchars($customer['package_name'] ?? 'N/A'); ?>
-                        </div>
-                        <div>
-                            <strong>Monthly Fee:</strong> <?php echo format_currency($customer['monthly_fee']); ?>
-                        </div>
-                    </div>
-                    <div class="form-row mt-1">
-                        <div>
-                            <strong>Installation Date:</strong> <?php echo date('F d, Y', strtotime($customer['installation_date'])); ?>
+                            <strong>Subscription Plan:</strong> <?php echo htmlspecialchars($customer['package_name'] ?? 'N/A'); ?> (<?php echo format_currency($customer['monthly_fee']); ?>/month)
                         </div>
                         <div>
                             <strong>Status:</strong> 
-                            <span class="badge badge-<?php echo $customer['status'] == 'active' ? 'success' : 'danger'; ?>">
-                                <?php echo ucfirst($customer['status']); ?>
+                            <span class="badge badge-<?php 
+                                echo $customer['status'] == 'active' ? 'success' : 
+                                    ($customer['status'] == 'hold_disconnection' ? 'warning' : 'danger'); 
+                            ?>">
+                                <?php echo ucfirst(str_replace('_', ' ', $customer['status'])); ?>
                             </span>
+                        </div>
+                    </div>
+                    <div class="form-row mt-1">
+                        <div>
+                            <strong>Date Connected:</strong> 
+                            <?php echo $customer['date_connected'] ? date('F d, Y', strtotime($customer['date_connected'])) : 'N/A'; ?>
+                        </div>
+                        <div>
+                            <strong>Date Disconnected:</strong> 
+                            <?php echo $customer['disconnection_date'] ? date('F d, Y', strtotime($customer['disconnection_date'])) : 'N/A'; ?>
+                        </div>
+                    </div>
+                    <div class="form-row mt-1">
+                        <div>
+                            <strong>Total Months Disconnected:</strong> 
+                            <?php echo $customer['status'] == 'disconnected' ? $total_months_disconnected . ' months' : 'N/A'; ?>
+                        </div>
+                        <div>
+                            <strong>Last Payment Date:</strong> 
+                            <?php echo $last_payment_date ? date('F d, Y', strtotime($last_payment_date)) : 'No payments yet'; ?>
                         </div>
                     </div>
                 </div>
@@ -119,14 +148,15 @@ $total_balance = 0;
                     <thead>
                         <tr>
                             <th>Period</th>
+                            <th>Prev Balance</th>
                             <th>Internet Fee</th>
                             <th>Cable Fee</th>
                             <th>Service Fee</th>
+                            <th>Material Fee</th>
                             <th>Total Amount</th>
                             <th>Amount Paid</th>
                             <th>Balance</th>
                             <th>Status</th>
-                            <th>Due Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,9 +170,11 @@ $total_balance = 0;
                             ?>
                             <tr>
                                 <td><?php echo get_month_name($row['billing_month']) . ' ' . $row['billing_year']; ?></td>
+                                <td><?php echo format_currency($row['previous_balance']); ?></td>
                                 <td><?php echo format_currency($row['internet_fee']); ?></td>
                                 <td><?php echo format_currency($row['cable_fee']); ?></td>
                                 <td><?php echo format_currency($row['service_fee']); ?></td>
+                                <td><?php echo format_currency($row['material_fee']); ?></td>
                                 <td><?php echo format_currency($row['net_amount']); ?></td>
                                 <td><?php echo format_currency($paid); ?></td>
                                 <td><?php echo format_currency($balance); ?></td>
@@ -156,19 +188,18 @@ $total_balance = 0;
                                         <?php echo ucfirst($row['status']); ?>
                                     </span>
                                 </td>
-                                <td><?php echo $row['due_date'] ? date('M d, Y', strtotime($row['due_date'])) : 'N/A'; ?></td>
                             </tr>
                             <?php endwhile; ?>
                             <tr style="background: var(--light-gray); font-weight: bold;">
-                                <td colspan="4" class="text-right">TOTAL:</td>
+                                <td colspan="6" class="text-right">TOTAL:</td>
                                 <td><?php echo format_currency($total_billed); ?></td>
                                 <td><?php echo format_currency($total_paid); ?></td>
                                 <td><?php echo format_currency($total_balance); ?></td>
-                                <td colspan="2"></td>
+                                <td></td>
                             </tr>
                         <?php else: ?>
                             <tr>
-                                <td colspan="9" class="text-center">No billing records found</td>
+                                <td colspan="10" class="text-center">No billing records found</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

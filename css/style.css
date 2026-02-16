@@ -65,6 +65,11 @@ body {
 
 .login-header .logo {
     margin-bottom: 15px;
+    margin-bottom: 15px;
+    height: 120px;
+    width: 120px;
+    background: var(--primary-color);
+    border-radius: 50%;
 }
 
 .login-header h1 {
@@ -304,6 +309,13 @@ body {
     gap: 20px;
 }
 
+.header-logo img{
+    height: 55px;
+    width: 55px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+}
+
 .user-info {
     text-align: right;
 }
@@ -331,6 +343,28 @@ body {
     background: var(--white);
     border-right: 1px solid var(--border-color);
     padding: 20px 0;
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+    align-self: flex-start;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: var(--light-gray);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
 }
 
 .sidebar-menu {
@@ -708,16 +742,59 @@ table tbody tr:hover {
 
 /* Print Styles */
 @media print {
-    .sidebar, .header-user, .table-actions, .btn {
+    .sidebar, .header-user, .table-actions, .btn, .no-print {
         display: none !important;
     }
     
+    .main-header {
+        display: none !important;
+    }
+    
+    .container {
+        display: block !important;
+    }
+    
     .main-content {
-        padding: 0;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     
     .table-container {
         box-shadow: none;
+        border: 1px solid #000;
+    }
+    
+    body {
+        background: white !important;
+    }
+    
+    .page-header {
+        margin-bottom: 20px !important;
+    }
+    
+    /* Ensure good page breaks */
+    table {
+        page-break-inside: auto;
+    }
+    
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    
+    thead {
+        display: table-header-group;
+    }
+    
+    tfoot {
+        display: table-footer-group;
+    }
+    
+    /* Print-friendly colors */
+    .badge {
+        border: 1px solid #000 !important;
+        background: white !important;
+        color: #000 !important;
     }
 }
 

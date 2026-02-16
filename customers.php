@@ -8,27 +8,73 @@ if (!isset($_SESSION['user_id'])) {
 
 $conn = getDBConnection();
 
-// Handle customer addition (Admin only)
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'add' && $_SESSION['role'] == 'admin') {
-    $account_number = sanitize_input($_POST['account_number']);
-    $subscriber_name = sanitize_input($_POST['subscriber_name']);
-    $address = sanitize_input($_POST['address']);
-    $area_id = intval($_POST['area_id']);
-    $tel_no = sanitize_input($_POST['tel_no']);
-    $package_id = intval($_POST['package_id']);
-    $monthly_fee = floatval($_POST['monthly_fee']);
-    $installation_date = sanitize_input($_POST['installation_date']);
+// Handle customer actions (Admin only)
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_SESSION['role'] == 'admin') {
     
-    $stmt = $conn->prepare("INSERT INTO customers (account_number, subscriber_name, address, area_id, tel_no, package_id, monthly_fee, installation_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssisids", $account_number, $subscriber_name, $address, $area_id, $tel_no, $package_id, $monthly_fee, $installation_date);
-    
-    if ($stmt->execute()) {
-        log_activity($_SESSION['user_id'], 'ADD_CUSTOMER', 'customers', $stmt->insert_id, "Added customer: $subscriber_name");
-        $success = "Customer added successfully!";
-    } else {
-        $error = "Error adding customer: " . $conn->error;
+    if ($_POST['action'] == 'add') {
+        $account_number = sanitize_input($_POST['account_number']);
+        $subscriber_name = sanitize_input($_POST['subscriber_name']);
+        $address = sanitize_input($_POST['address']);
+        $area_id = intval($_POST['area_id']);
+        $tel_no = sanitize_input($_POST['tel_no']);
+        $package_id = intval($_POST['package_id']);
+        $monthly_fee = floatval($_POST['monthly_fee']);
+        $installation_date = sanitize_input($_POST['installation_date']);
+        
+        $stmt = $conn->prepare("INSERT INTO customers (account_number, subscriber_name, address, area_id, tel_no, package_id, monthly_fee, installation_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssisids", $account_number, $subscriber_name, $address, $area_id, $tel_no, $package_id, $monthly_fee, $installation_date);
+        
+        if ($stmt->execute()) {
+            log_activity($_SESSION['user_id'], 'ADD_CUSTOMER', 'customers', $stmt->insert_id, "Added customer: $subscriber_name");
+            $success = "Customer added successfully!";
+        } else {
+            $error = "Error adding customer: " . $conn->error;
+        }
+        $stmt->close();
     }
-    $stmt->close();
+    
+    // Disconnect customer
+    elseif ($_POST['action'] == 'disconnect') {
+        $customer_id = intval($_POST['customer_id']);
+        $disconnection_date = date('Y-m-d');
+        
+        $stmt = $conn->prepare("UPDATE customers SET status = 'disconnected', disconnection_date = ? WHERE customer_id = ?");
+        $stmt->bind_param("si", $disconnection_date, $customer_id);
+        
+        if ($stmt->execute()) {
+            log_activity($_SESSION['user_id'], 'DISCONNECT_CUSTOMER', 'customers', $customer_id, "Disconnected customer");
+            $success = "Customer disconnected successfully!";
+        }
+        $stmt->close();
+    }
+    
+    // Reconnect customer
+    elseif ($_POST['action'] == 'reconnect') {
+        $customer_id = intval($_POST['customer_id']);
+        
+        $stmt = $conn->prepare("UPDATE customers SET status = 'active', disconnection_date = NULL WHERE customer_id = ?");
+        $stmt->bind_param("i", $customer_id);
+        
+        if ($stmt->execute()) {
+            log_activity($_SESSION['user_id'], 'RECONNECT_CUSTOMER', 'customers', $customer_id, "Reconnected customer");
+            $success = "Customer reconnected successfully!";
+        }
+        $stmt->close();
+    }
+    
+    // Suspend customer
+    elseif ($_POST['action'] == 'suspend') {
+        $customer_id = intval($_POST['customer_id']);
+        
+        $stmt = $conn->prepare("UPDATE customers SET status = 'suspended' WHERE customer_id = ?");
+        $stmt->bind_param("i", $customer_id);
+        
+        if ($stmt->execute()) {
+            log_activity($_SESSION['user_id'], 'SUSPEND_CUSTOMER', 'customers', $customer_id, "Suspended customer");
+            $success = "Customer suspended successfully!";
+        }
+        $stmt->close();
+    }
 }
 
 // Get filters
@@ -177,6 +223,21 @@ $areas = $conn->query("SELECT * FROM areas ORDER BY area_name");
                                 </td>
                                 <td>
                                     <a href="customer_ledger.php?id=<?php echo $row['customer_id']; ?>" class="btn btn-sm btn-primary">View Ledger</a>
+                                    <?php if ($_SESSION['role'] == 'admin'): ?>
+                                        <?php if ($row['status'] == 'active'): ?>
+                                            <button onclick="if(confirm('Disconnect this customer?')) { document.getElementById('action_form_<?php echo $row['customer_id']; ?>').submit(); }" class="btn btn-sm btn-danger">Disconnect</button>
+                                            <form id="action_form_<?php echo $row['customer_id']; ?>" method="POST" style="display:none;">
+                                                <input type="hidden" name="action" value="disconnect">
+                                                <input type="hidden" name="customer_id" value="<?php echo $row['customer_id']; ?>">
+                                            </form>
+                                        <?php elseif ($row['status'] == 'disconnected' || $row['status'] == 'suspended'): ?>
+                                            <button onclick="if(confirm('Reconnect this customer?')) { document.getElementById('reconnect_form_<?php echo $row['customer_id']; ?>').submit(); }" class="btn btn-sm btn-success">Reconnect</button>
+                                            <form id="reconnect_form_<?php echo $row['customer_id']; ?>" method="POST" style="display:none;">
+                                                <input type="hidden" name="action" value="reconnect">
+                                                <input type="hidden" name="customer_id" value="<?php echo $row['customer_id']; ?>">
+                                            </form>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endwhile; ?>

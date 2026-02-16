@@ -199,7 +199,8 @@ $recent_payments = $conn->query("
                                 <td><?php echo format_currency($row['amount_paid']); ?></td>
                                 <td><?php echo ucfirst($row['payment_method']); ?></td>
                                 <td>
-                                    <a href="print_receipt.php?id=<?php echo $row['payment_id']; ?>" target="_blank" class="btn btn-sm btn-primary">Print Receipt</a>
+                                    <a href="print_invoice.php?id=<?php echo $row['payment_id']; ?>" target="_blank" class="btn btn-sm btn-primary">Print Invoice</a>
+                                    <a href="print_receipt.php?id=<?php echo $row['payment_id']; ?>" target="_blank" class="btn btn-sm btn-secondary">Print Receipt</a>
                                 </td>
                             </tr>
                             <?php endwhile; ?>
