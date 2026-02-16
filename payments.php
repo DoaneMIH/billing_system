@@ -111,16 +111,29 @@ $recent_payments = $conn->query("
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="search_customer">Search Customer *</label>
-                                <input type="text" id="search_customer" placeholder="Enter account number or name" autocomplete="off">
+                                <input type="text" id="search_customer" placeholder="Type account number or name..." autocomplete="off" list="customer_list">
+                                <datalist id="customer_list">
+                                    <?php
+                                    // Get all active customers for datalist
+                                    $customers_list = $conn->query("SELECT customer_id, account_number, subscriber_name FROM customers WHERE status IN ('active', 'hold_disconnection') ORDER BY subscriber_name");
+                                    while ($cust = $customers_list->fetch_assoc()) {
+                                        echo '<option value="' . htmlspecialchars($cust['account_number']) . '">' . htmlspecialchars($cust['subscriber_name']) . '</option>';
+                                    }
+                                    ?>
+                                </datalist>
                                 <div id="customer_results" style="position: relative;"></div>
                                 <input type="hidden" id="customer_id" name="customer_id" required>
+                                <div id="selected_customer" style="margin-top: 10px; padding: 10px; background: #e7f3ff; border-radius: 5px; display: none;">
+                                    <strong>Selected:</strong> <span id="selected_customer_name"></span>
+                                </div>
                             </div>
                             
                             <div class="form-group">
                                 <label for="billing_period">Billing Period *</label>
-                                <select id="billing_period" name="billing_id" required>
-                                    <option value="">Select billing period</option>
+                                <select id="billing_period" name="billing_id" required disabled>
+                                    <option value="">Select customer first</option>
                                 </select>
+                                <div id="billing_info" style="margin-top: 10px; font-size: 12px; color: #666;"></div>
                             </div>
                         </div>
                         
@@ -216,7 +229,7 @@ $recent_payments = $conn->query("
     </div>
     
     <script src="js/script.js"></script>
-    <script src="js/payments.js"></script>
+    <script src="js/payment.js"></script>
 </body>
 </html>
 <?php $conn->close(); ?>
