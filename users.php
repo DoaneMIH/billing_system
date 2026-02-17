@@ -39,6 +39,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 log_activity($_SESSION['user_id'], 'UPDATE_USER_STATUS', 'users', $user_id, "Changed status to $new_status");
                 $success = "User status updated!";
                 break;
+            
+            case 'change_password':
+                $user_id = intval($_POST['user_id']);
+                $new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+                
+                $stmt = $conn->prepare("UPDATE users SET password = ? WHERE user_id = ?");
+                $stmt->bind_param("si", $new_password, $user_id);
+                
+                if ($stmt->execute()) {
+                    log_activity($_SESSION['user_id'], 'CHANGE_USER_PASSWORD', 'users', $user_id, "Changed user password");
+                    $success = "Password updated successfully!";
+                } else {
+                    $error = "Error updating password: " . $conn->error;
+                }
+                $stmt->close();
+                break;
+            
+            case 'delete':
+                $user_id = intval($_POST['user_id']);
+                
+                // Prevent deleting yourself
+                if ($user_id == $_SESSION['user_id']) {
+                    $error = "You cannot delete your own account!";
+                } else {
+                    $stmt = $conn->prepare("DELETE FROM users WHERE user_id = ?");
+                    $stmt->bind_param("i", $user_id);
+                    
+                    if ($stmt->execute()) {
+                        log_activity($_SESSION['user_id'], 'DELETE_USER', 'users', $user_id, "Deleted user");
+                        $success = "User deleted successfully!";
+                    } else {
+                        $error = "Error deleting user: " . $conn->error;
+                    }
+                    $stmt->close();
+                }
+                break;
         }
     }
 }
@@ -127,7 +163,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
                             <td><?php echo $user['last_login'] ? date('M d, Y H:i', strtotime($user['last_login'])) : 'Never'; ?></td>
                             <td>
                                 <?php if ($user['user_id'] != $_SESSION['user_id']): ?>
-                                <form method="POST" style="display: inline;">
+                                <form method="POST" style="display: inline-block; margin: 0;">
                                     <input type="hidden" name="action" value="toggle_status">
                                     <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
                                     <input type="hidden" name="status" value="<?php echo $user['status']; ?>">
@@ -135,6 +171,22 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
                                         <?php echo $user['status'] == 'active' ? 'Deactivate' : 'Activate'; ?>
                                     </button>
                                 </form>
+                                <button onclick='openPasswordModal(<?php echo $user['user_id']; ?>, "<?php echo htmlspecialchars($user['username']); ?>")' class="btn btn-sm btn-primary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                    Change Password
+                                </button>
+                                <button onclick="deleteUser(<?php echo $user['user_id']; ?>, '<?php echo htmlspecialchars($user['username']); ?>')" class="btn btn-sm btn-danger">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    </svg>
+                                    Delete
+                                </button>
+                                <?php else: ?>
+                                <span class="badge badge-info">Current User</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -147,7 +199,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
     
     <!-- Add User Modal -->
     <div id="addUserModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); ">
             <div class="modal-header">
                 <h2>Add New User</h2>
                 <button type="button" class="modal-close" onclick="closeModal('addUserModal')">&times;</button>
@@ -195,7 +247,87 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
         </div>
     </div>
     
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); ">
+            <div class="modal-header">
+                <h2>Change User Password</h2>
+                <button type="button" class="modal-close" onclick="closeModal('changePasswordModal')">&times;</button>
+            </div>
+            <form method="POST" action="" id="changePasswordForm">
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="change_password">
+                    <input type="hidden" id="password_user_id" name="user_id">
+                    
+                    <div class="form-group">
+                        <label>Username:</label>
+                        <input type="text" id="password_username" disabled style="background: #f5f5f5;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password">New Password *</label>
+                        <input type="password" id="new_password" name="new_password" required minlength="6" placeholder="Enter new password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm New Password *</label>
+                        <input type="password" id="confirm_password" required minlength="6" placeholder="Re-enter new password">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete Form (hidden) -->
+    <form id="deleteUserForm" method="POST" style="display: none;">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" id="delete_user_id" name="user_id">
+    </form>
+    
     <script src="js/script.js"></script>
+    <script>
+        // Validate password confirmation before submit
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            const newPass = document.getElementById('new_password').value;
+            const confirmPass = document.getElementById('confirm_password').value;
+            
+            if (newPass !== confirmPass) {
+                e.preventDefault();
+                alert('Passwords do not match! Please try again.');
+                document.getElementById('confirm_password').focus();
+                return false;
+            }
+        });
+        
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function openPasswordModal(userId, username) {
+            document.getElementById('password_user_id').value = userId;
+            document.getElementById('password_username').value = username;
+            document.getElementById('new_password').value = '';
+            document.getElementById('confirm_password').value = '';
+            document.getElementById('changePasswordModal').style.display = 'block';
+        }
+        
+   
+        function deleteUser(userId, username) {
+            if (confirm(`Are you sure you want to DELETE user "${username}"?\n\nThis action cannot be undone!`)) {
+                document.getElementById('delete_user_id').value = userId;
+                document.getElementById('deleteUserForm').submit();
+            }
+        }
+    </script>
 </body>
 </html>
 <?php $conn->close(); ?>

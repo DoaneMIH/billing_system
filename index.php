@@ -31,6 +31,46 @@ $result = $conn->query("SELECT SUM(amount_paid) as total FROM payments WHERE MON
 $row = $result->fetch_assoc();
 $stats['monthly_revenue'] = $row['total'] ?? 0;
 
+// Pagination for recent activity
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$per_page = 5;
+$offset = ($page - 1) * $per_page;
+
+// Get total count for pagination
+if ($_SESSION['role'] == 'admin') {
+    $count_result = $conn->query("SELECT COUNT(*) as total FROM activity_logs");
+} else {
+    $user_id = $_SESSION['user_id'];
+    $count_result = $conn->query("SELECT COUNT(*) as total FROM activity_logs WHERE user_id = $user_id");
+}
+$total_records = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_records / $per_page);
+
+// Get recent activity based on user role with pagination
+if ($_SESSION['role'] == 'admin') {
+    // Admin sees ALL activity from all users
+    $activity_query = "
+        SELECT al.*, u.username, u.full_name
+        FROM activity_logs al
+        LEFT JOIN users u ON al.user_id = u.user_id
+        ORDER BY al.created_at DESC
+        LIMIT $per_page OFFSET $offset
+    ";
+} else {
+    // Other roles only see their own activity
+    $user_id = $_SESSION['user_id'];
+    $activity_query = "
+        SELECT al.*, u.username, u.full_name
+        FROM activity_logs al
+        LEFT JOIN users u ON al.user_id = u.user_id
+        WHERE al.user_id = $user_id
+        ORDER BY al.created_at DESC
+        LIMIT $per_page OFFSET $offset
+    ";
+}
+
+$recent_activity = $conn->query($activity_query);
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -164,9 +204,150 @@ $conn->close();
                 <div class="widget">
                     <div class="widget-header">
                         <h2>Recent Activity</h2>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <?php if ($_SESSION['role'] == 'admin'): ?>
+                            <span class="badge badge-info">All Users</span>
+                            <?php else: ?>
+                            <span class="badge badge-secondary">Your Activity</span>
+                            <?php endif; ?>
+                            <span class="badge badge-secondary"><?php echo number_format($total_records); ?> total</span>
+                        </div>
                     </div>
-                    <div class="widget-content">
-                        <p class="text-muted">Activity tracking will appear here.</p>
+                    <div class="widget-content" style="padding: 0;">
+                        <?php if ($recent_activity && $recent_activity->num_rows > 0): ?>
+                        <div class="table-responsive">
+                            <table class="activity-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;"></th>
+                                        <?php if ($_SESSION['role'] == 'admin'): ?>
+                                        <th style="width: 150px;">User</th>
+                                        <?php endif; ?>
+                                        <th>Action</th>
+                                        <th style="width: 120px;">Table</th>
+                                        <th style="width: 180px;">Date & Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php while ($activity = $recent_activity->fetch_assoc()): ?>
+                                    <tr>
+                                        <td class="text-center">
+                                            <div class="activity-icon-small <?php 
+                                                echo match($activity['action']) {
+                                                    'LOGIN' => 'blue',
+                                                    'LOGOUT' => 'gray',
+                                                    'ADD_CUSTOMER', 'ADD_USER', 'ADD_AREA', 'ADD_PACKAGE' => 'green',
+                                                    'RECORD_PAYMENT' => 'success',
+                                                    'GENERATE_BILLING' => 'orange',
+                                                    'DELETE_USER', 'DISCONNECT_CUSTOMER', 'DELETE_AREA', 'DELETE_PACKAGE' => 'red',
+                                                    'EDIT_CUSTOMER', 'EDIT_AREA', 'EDIT_PACKAGE', 'UPDATE_USER_STATUS' => 'blue',
+                                                    default => 'secondary'
+                                                };
+                                            ?>">
+                                                <?php
+                                                $icon = match($activity['action']) {
+                                                    'LOGIN' => '🔵',
+                                                    'LOGOUT' => '⚪',
+                                                    'RECORD_PAYMENT' => '💳',
+                                                    'ADD_CUSTOMER' => '👤',
+                                                    'GENERATE_BILLING' => '📄',
+                                                    'ADD_USER' => '👥',
+                                                    'DELETE_USER' => '🗑️',
+                                                    'DISCONNECT_CUSTOMER' => '🔴',
+                                                    'RECONNECT_CUSTOMER' => '🟢',
+                                                    'EDIT_CUSTOMER' => '✏️',
+                                                    'ADD_AREA' => '📍',
+                                                    'ADD_PACKAGE' => '📦',
+                                                    default => '🟣'
+                                                };
+                                                echo $icon;
+                                                ?>
+                                            </div>
+                                        </td>
+                                        <?php if ($_SESSION['role'] == 'admin'): ?>
+                                        <td>
+                                            <strong style="color: var(--primary-color); font-size: 13px;">
+                                                <?php echo htmlspecialchars($activity['full_name'] ?? $activity['username']); ?>
+                                            </strong>
+                                        </td>
+                                        <?php endif; ?>
+                                        <td>
+                                            <div style="font-size: 13px; color: var(--text-color);">
+                                                <?php echo htmlspecialchars($activity['description']); ?>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-secondary" style="font-size: 11px;">
+                                                <?php echo htmlspecialchars($activity['table_name']); ?>
+                                            </span>
+                                        </td>
+                                        <td style="font-size: 12px; color: #666;">
+                                            <?php echo date('M d, Y h:i A', strtotime($activity['created_at'])); ?>
+                                        </td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <?php if ($total_pages > 1): ?>
+                        <div class="pagination-container">
+                            <div class="pagination-info">
+                                Showing <?php echo $offset + 1; ?> - <?php echo min($offset + $per_page, $total_records); ?> of <?php echo number_format($total_records); ?> records
+                            </div>
+                            <div class="pagination">
+                                <?php if ($page > 1): ?>
+                                <a href="?page=1" class="pagination-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="11 17 6 12 11 7"/>
+                                        <polyline points="18 17 13 12 18 7"/>
+                                    </svg>
+                                </a>
+                                <a href="?page=<?php echo $page - 1; ?>" class="pagination-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="15 18 9 12 15 6"/>
+                                    </svg>
+                                </a>
+                                <?php endif; ?>
+                                
+                                <?php
+                                $start_page = max(1, $page - 2);
+                                $end_page = min($total_pages, $page + 2);
+                                
+                                for ($i = $start_page; $i <= $end_page; $i++):
+                                ?>
+                                <a href="?page=<?php echo $i; ?>" class="pagination-btn <?php echo $i == $page ? 'active' : ''; ?>">
+                                    <?php echo $i; ?>
+                                </a>
+                                <?php endfor; ?>
+                                
+                                <?php if ($page < $total_pages): ?>
+                                <a href="?page=<?php echo $page + 1; ?>" class="pagination-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="9 18 15 12 9 6"/>
+                                    </svg>
+                                </a>
+                                <a href="?page=<?php echo $total_pages; ?>" class="pagination-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="13 17 18 12 13 7"/>
+                                        <polyline points="6 17 11 12 6 7"/>
+                                    </svg>
+                                </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <?php else: ?>
+                        <div style="padding: 40px; text-align: center;">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity: 0.2; margin-bottom: 15px;">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <p style="color: #999; font-size: 14px; margin: 0;">No recent activity yet.</p>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

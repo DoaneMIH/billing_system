@@ -237,6 +237,17 @@ body {
     cursor: not-allowed;
 }
 
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+/* Ensure buttons align properly in table cells */
+table td .btn {
+    margin: 2px;
+}
+
 /* Alerts */
 .alert {
     padding: 12px 15px;
@@ -720,6 +731,7 @@ table tbody tr:hover {
     gap: 10px;
 }
 
+
 /* Utilities */
 .text-center {
     text-align: center;
@@ -819,4 +831,133 @@ table tbody tr:hover {
     .form-row {
         grid-template-columns: 1fr;
     }
+}
+
+/* Activity Table Styles */
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.activity-table thead {
+    background-color: var(--light-gray);
+}
+
+.activity-table thead th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.activity-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.activity-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.activity-table tbody td {
+    padding: 12px 15px;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.activity-icon-small {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.activity-icon-small.blue {
+    background-color: #e3f2fd;
+}
+
+.activity-icon-small.green {
+    background-color: #e8f5e9;
+}
+
+.activity-icon-small.success {
+    background-color: #e8f5e9;
+}
+
+.activity-icon-small.orange {
+    background-color: #fff3e0;
+}
+
+.activity-icon-small.red {
+    background-color: #ffebee;
+}
+
+.activity-icon-small.gray {
+    background-color: #f5f5f5;
+}
+
+.activity-icon-small.secondary {
+    background-color: #f5f5f5;
+}
+
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--light-gray);
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #666;
+}
+
+.pagination {
+    display: flex;
+    gap: 5px;
+}
+
+.pagination-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: 600;
+}
+
+.pagination-btn svg {
+    stroke: currentColor;
+}
+
+.table-responsive {
+    overflow-x: auto;
 }

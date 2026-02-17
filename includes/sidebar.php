@@ -74,16 +74,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </li>
         <?php endif; ?>
         
-        <li>
-            <a href="search.php" class="<?php echo $current_page == 'search.php' ? 'active' : ''; ?>">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
-                </svg>
-                <span>Search</span>
-            </a>
-        </li>
-        
         <?php if ($_SESSION['role'] == 'admin'): ?>
         <li>
             <a href="users.php" class="<?php echo $current_page == 'users.php' ? 'active' : ''; ?>">
@@ -93,6 +83,28 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <line x1="17" y1="11" x2="23" y2="11"/>
                 </svg>
                 <span>User Management</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="manage_areas.php" class="<?php echo $current_page == 'manage_areas.php' ? 'active' : ''; ?>">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>Manage Areas</span>
+            </a>
+        </li>
+        
+        <li>
+            <a href="manage_packages.php" class="<?php echo $current_page == 'manage_packages.php' ? 'active' : ''; ?>">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/>
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+                <span>Manage Packages</span>
             </a>
         </li>
         

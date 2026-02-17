@@ -111,16 +111,7 @@ $recent_payments = $conn->query("
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="search_customer">Search Customer *</label>
-                                <input type="text" id="search_customer" placeholder="Type account number or name..." autocomplete="off" list="customer_list">
-                                <datalist id="customer_list">
-                                    <?php
-                                    // Get all active customers for datalist
-                                    $customers_list = $conn->query("SELECT customer_id, account_number, subscriber_name FROM customers WHERE status IN ('active', 'hold_disconnection') ORDER BY subscriber_name");
-                                    while ($cust = $customers_list->fetch_assoc()) {
-                                        echo '<option value="' . htmlspecialchars($cust['account_number']) . '">' . htmlspecialchars($cust['subscriber_name']) . '</option>';
-                                    }
-                                    ?>
-                                </datalist>
+                                <input type="text" id="search_customer" placeholder="Click here to see all customers or type to search..." autocomplete="off">
                                 <div id="customer_results" style="position: relative;"></div>
                                 <input type="hidden" id="customer_id" name="customer_id" required>
                                 <div id="selected_customer" style="margin-top: 10px; padding: 10px; background: #e7f3ff; border-radius: 5px; display: none;">
