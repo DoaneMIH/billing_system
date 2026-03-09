@@ -47,8 +47,8 @@ if (empty($customer_ids)) { die("No customer selected"); }
         .statement-page { width: 210mm; min-height: 148mm; margin: 10px auto; background: white; padding: 8mm 10mm; box-shadow: 0 2px 10px rgba(0,0,0,0.1); page-break-after: always; }
         .statement-page:last-child { page-break-after: auto; }
         
-        .logo-header { display: flex; align-items: center; margin-bottom: 5px; }
-        .logo-header img { height: 55px; margin-right: 10px; }
+        .logo-header { display: flex; align-items: center; margin-bottom: 5px; width: 100%;}
+        .logo-header img { height: 20px; margin-right: 10px; }
         .logo-header .company-text { }
         .logo-header .company-text h1 { font-size: 20px; color: #002060; font-weight: bold; margin: 0; }
         .logo-header .company-text p { font-size: 10px; color: #333; margin: 0; }
@@ -142,14 +142,15 @@ if (empty($customer_ids)) { die("No customer selected"); }
         $due_date = $billing ? date('Y M d', strtotime($billing['due_date'])) : "$billing_year " . strtoupper(substr(get_month_name($billing_month), 0, 3)) . " $last_day";
     ?>
     <div class="statement-page">
-        <div class="logo-header">
-            <img src="images/logo.jpg" alt="Logo" onerror="this.style.display='none'">
+        <img src="images/headerlogo.png" alt="" class="logo-header">
+        <!-- <div class="logo-header"> -->
+            <!-- <img src="images/logo.jpg" alt="Logo" onerror="this.style.display='none'">
             <div class="company-text">
                 <h1>NOVA LINK DIGITAL SYSTEMS CORP.</h1>
                 <p>F. PALMARES STREET, PASSI CITY, ILOILO</p>
                 <p>0962-782-9066</p>
-            </div>
-        </div>
+            </div> -->
+        <!-- </div> -->
         
         <div class="title-bar"><h2>STATEMENT OF ACCOUNT</h2></div>
         
