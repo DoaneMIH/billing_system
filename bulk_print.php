@@ -47,7 +47,7 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label>Customer Status</label>
+                                    <label>Subscriber Status</label>
                                     <select name="status">
                                         <option value="">All Status</option>
                                         <option value="active">Active</option>
@@ -86,7 +86,7 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
                         <form id="bulkInstallForm">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label>Customer Status</label>
+                                    <label>Subscriber Status</label>
                                     <select name="inst_status">
                                         <option value="">All</option>
                                         <option value="active">Active</option>
@@ -114,8 +114,8 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
                 <div class="widget-header"><h2>👤 Individual Print</h2></div>
                 <div class="widget-content">
                     <div class="form-group">
-                        <label>Search Customer</label>
-                        <input type="text" id="print-search" placeholder="Type customer name or account #..." autocomplete="off">
+                        <label>Search Subscriber</label>
+                        <input type="text" id="print-search" placeholder="Type subscriber name or account #..." autocomplete="off">
                         <div id="print-results" style="margin-top:10px;"></div>
                     </div>
                 </div>
@@ -140,7 +140,7 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
             // Fetch customer IDs and open print pages
             let url = `ajax/search_customers.php?q=&status=${status}&area=${area}`;
             fetch(url).then(r=>r.json()).then(customers => {
-                if (customers.length === 0) { alert('No customers found with these filters.'); return; }
+                if (customers.length === 0) { alert('No subscribers found with these filters.'); return; }
                 const ids = customers.map(c => c.customer_id).join(',');
                 // Open each in sequence (or combined page)
                 customers.forEach((c, i) => {

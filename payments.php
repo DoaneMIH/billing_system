@@ -90,7 +90,7 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
                         <input type="hidden" name="action" value="record_payment">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Search Customer *</label>
+                                <label>Search Subscriber *</label>
                                 <input type="text" id="search_customer" placeholder="Type to search..." autocomplete="off">
                                 <div id="customer_results" style="position:relative;"></div>
                                 <input type="hidden" id="customer_id" name="customer_id" required>
@@ -101,7 +101,7 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
                             <div class="form-group">
                                 <label>Billing Period *</label>
                                 <select id="billing_period" name="billing_id" required disabled>
-                                    <option value="">Select customer first</option>
+                                    <option value="">Select subscriber first</option>
                                 </select>
                                 <div id="billing_info" style="margin-top:5px;font-size:12px;color:#666;"></div>
                             </div>

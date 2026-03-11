@@ -1,0 +1,129 @@
+============================================================
+  AR NOVALINK BILLING SYSTEM v2.1 - USER GUIDE
+  Updated Features & How-To
+============================================================
+
+1. TERMINOLOGY CHANGE: "Customer" → "Subscriber"
+------------------------------------------------------------
+All navigation menus, page headers, table labels, modals,
+and search fields now use "Subscriber" instead of "Customer."
+The database column `subscriber_name` was already in place;
+only the UI labels were updated. No database changes needed.
+
+
+2. SUBSCRIBER STATUS: Pending Installation
+------------------------------------------------------------
+When adding a new subscriber, you can select "Pending
+Installation" as the initial status.
+
+HOW TO CONFIRM INSTALLATION IS DONE:
+  a) Go to Subscribers page
+  b) Find the subscriber with "Pending Installation" status
+  c) Click the green "✅ Done Install" button
+  d) Confirm the action in the popup dialog
+  e) The subscriber's status changes to "Active"
+     and the installation/connection date is set to today
+
+This action is logged in the Status Change History with
+the exact date, time, and staff member who confirmed it.
+
+
+3. DISCONNECT / RECONNECT LOGGING
+------------------------------------------------------------
+Every Disconnect and Reconnect action now saves:
+  - Exact Date (YYYY-MM-DD)
+  - Exact Time (HH:MM:SS)
+  - Staff member who performed the action
+  - Descriptive remarks
+
+View this history on any subscriber's Ledger page under
+the "Status Change History" section. The Time column now
+shows the precise time (e.g., "02:35:12 PM").
+
+
+4. PRINTING: Header Logo
+------------------------------------------------------------
+All printable pages now include `headerlogo.png` at the top:
+  - Billing Statements (SOA)
+  - Installation Forms
+  - Sketch Pages
+  - Ledger Print View
+  - Unpaid Bills Report
+
+The logo file is located at: images/headerlogo.png
+To change it, simply replace this file with your updated logo.
+
+
+5. PRINTING: Sketch Page
+------------------------------------------------------------
+A new dedicated "Print Sketch" page is available.
+
+HOW TO ACCESS:
+  a) Go to a subscriber's Ledger page
+  b) Click "🖨️ Print Sketch" button
+  c) A new page opens showing:
+     - Header logo
+     - Full subscriber details (name, address, package, etc.)
+     - All uploaded sketches/photos with remarks
+     - Signature lines for Prepared/Approved/Date
+
+You can also access it directly: print_sketch.php?id=SUBSCRIBER_ID
+
+
+6. PRINTING: Clean Print for Unpaid Bills
+------------------------------------------------------------
+When printing the Unpaid Bills report:
+  - Sidebar, header, navigation, and filter controls are hidden
+  - The "Actions" column (View Ledger buttons) is hidden
+  - A clean print header with the company logo is shown
+  - Only the data table and totals are printed
+
+
+7. PRINTING: Billing Statement - Pending Balance
+------------------------------------------------------------
+If a subscriber has unpaid balances from previous months,
+the Billing Statement now explicitly shows:
+
+  "Total Pending Balance (all months): ₱X,XXX.XX"
+
+This appears as a red-highlighted box below the Total Amount
+Due, ensuring the subscriber sees their full outstanding amount.
+
+
+8. QUICK REFERENCE: New Files
+------------------------------------------------------------
+  print_sketch.php        - New printable sketch page
+  customers.php           - Updated with "Done Install" button
+  customer_ledger.php     - Added "Print Sketch" button
+  print_billing_statement - Added pending balance display
+  unpaid.php              - Clean print, no action buttons
+  includes/sidebar.php    - "Subscribers" label
+  includes/header.php     - Uses headerlogo.png
+  ajax/search_customers   - Updated terminology
+  ajax/dashboard_search   - Updated terminology
+  index.php               - "Subscribers" dashboard labels
+
+
+9. ADMIN WORKFLOW: New Subscriber Installation
+------------------------------------------------------------
+  Step 1: Add subscriber with "Pending Installation" status
+  Step 2: Technician performs physical installation
+  Step 3: Upload sketch/photo via Sketch button
+  Step 4: Admin clicks "✅ Done Install" to activate
+  Step 5: System sets status to Active, logs the event
+  Step 6: Billing can now be generated for this subscriber
+
+
+10. TROUBLESHOOTING
+------------------------------------------------------------
+Q: Logo not showing on printouts?
+A: Ensure images/headerlogo.png exists and is accessible.
+
+Q: "Done Install" button not appearing?
+A: It only shows for subscribers with "Pending Installation"
+   status. Only admin users can see this button.
+
+Q: Old terminology still showing somewhere?
+A: Clear your browser cache (Ctrl+Shift+R). The changes
+   are in the PHP files, not cached JavaScript.
+============================================================

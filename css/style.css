@@ -422,6 +422,7 @@ table td .btn {
     font-size: 28px;
     color: var(--primary-color);
     margin-bottom: 5px;
+    text-transform: uppercase;
 }
 
 .page-header p {

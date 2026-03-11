@@ -3,11 +3,11 @@
         <div class="header-logo">
             <img src="images/logo.jpg" alt="NovaLink Logo" class="logo">
             <h1>AR NOVALINK Billing System</h1>
-        </div>
+            </div>
         <div class="header-user">
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($_SESSION['full_name']); ?></div>
-                <div class="user-role"><?php echo htmlspecialchars($_SESSION['role']); ?></div>
+                <div class="user-role"><?php echo ucfirst(htmlspecialchars($_SESSION['role'])); ?></div>
             </div>
             <a href="logout.php" class="btn btn-danger btn-sm">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

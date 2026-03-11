@@ -7,7 +7,7 @@
         
         <li><a href="customers.php" class="<?php echo $current_page=='customers.php'?'active':''; ?>">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-            <span>Customers</span></a></li>
+            <span>Subscribers</span></a></li>
         
         <?php if ($_SESSION['role'] == 'cashier' || $_SESSION['role'] == 'admin'): ?>
         <li><a href="payments.php" class="<?php echo $current_page=='payments.php'?'active':''; ?>">
