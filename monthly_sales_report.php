@@ -100,10 +100,10 @@ $grand_total = 0;
     $grand_total = $row['total_sales'];
     ?>
     
-    <h3 style="color: var(--primary-color); margin: 20px 0 10px 0;">Sales Summary</h3>
+    <h3 class="report-section-heading">Sales Summary</h3>
     <table>
         <thead>
-            <tr style="background: var(--primary-color); color: white;">
+            <tr class="table-row-total-primary">
                 <th colspan="2">Payment Method Breakdown</th>
             </tr>
         </thead>
@@ -124,15 +124,15 @@ $grand_total = 0;
                 <td><strong>Other Payment Methods</strong></td>
                 <td class="text-right"><?php echo format_currency($row['other_payments']); ?></td>
             </tr>
-            <tr style="background: var(--success-color); color: white; font-weight: bold; font-size: 16px;">
+            <tr class="table-row-total-success">
                 <td><strong>TOTAL SALES</strong></td>
                 <td class="text-right"><strong><?php echo format_currency($row['total_sales']); ?></strong></td>
             </tr>
         </tbody>
     </table>
     
-    <div style="margin: 20px 0; padding: 15px; background: var(--light-gray); border-radius: 5px;">
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+    <div class="sales-stats-bar">
+        <div class="report-summary-grid-3">
             <div>
                 <strong>Total Transactions:</strong> <?php echo number_format($row['total_transactions']); ?>
             </div>
@@ -151,7 +151,7 @@ $grand_total = 0;
     </div>
 <?php endif; ?>
 
-<h3 style="color: var(--primary-color); margin: 30px 0 10px 0;">Transaction Details</h3>
+<h3 class="report-section-heading">Transaction Details</h3>
 <table>
     <thead>
         <tr>
@@ -182,7 +182,7 @@ $grand_total = 0;
                 <td><?php echo htmlspecialchars($txn['cashier_name'] ?? 'N/A'); ?></td>
             </tr>
             <?php endwhile; ?>
-            <tr style="background: var(--light-gray); font-weight: bold;">
+            <tr class="table-row-total">
                 <td colspan="5" class="text-right">TOTAL:</td>
                 <td class="text-right"><?php echo format_currency($daily_total); ?></td>
                 <td colspan="2"></td>
@@ -195,8 +195,8 @@ $grand_total = 0;
     </tbody>
 </table>
 
-<div style="margin-top: 40px; padding: 20px; border-top: 2px solid var(--primary-color);">
-    <p style="text-align: center; color: var(--dark-gray); font-size: 12px;">
+<div class="report-footer">
+    <p>
         This report is computer-generated and shows all payment transactions for the selected period.
     </p>
 </div>

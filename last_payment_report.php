@@ -116,14 +116,14 @@ $customers = $conn->query($sql);
                 // Color coding based on payment frequency
                 $row_class = '';
                 if (!$row['last_payment_date']) {
-                    $row_class = 'style="background: #f8d7da;"'; // Red - never paid
+                    $row_class = 'table-row-critical'; // Red - never paid
                 } elseif ($days_since > 60) {
-                    $row_class = 'style="background: #fff3cd;"'; // Yellow - 60+ days
+                    $row_class = 'table-row-overdue'; // Yellow - 60+ days
                 } elseif ($days_since > 90) {
-                    $row_class = 'style="background: #f8d7da;"'; // Red - 90+ days
+                    $row_class = 'table-row-critical'; // Red - 90+ days
                 }
             ?>
-            <tr <?php echo $row_class; ?>>
+            <tr class="<?php echo $row_class; ?>">
                 <td><?php echo htmlspecialchars($row['account_number']); ?></td>
                 <td><?php echo htmlspecialchars($row['subscriber_name']); ?></td>
                 <td><?php echo htmlspecialchars($row['area_name'] ?? 'N/A'); ?></td>
@@ -159,9 +159,9 @@ $customers = $conn->query($sql);
                 <td class="text-right"><?php echo format_currency($row['lifetime_total_paid'] ?? 0); ?></td>
                 <td class="text-right">
                     <?php if ($row['current_balance'] > 0): ?>
-                        <strong style="color: #dc3545;"><?php echo format_currency($row['current_balance']); ?></strong>
+                        <strong class="ledger-balance-positive"><?php echo format_currency($row['current_balance']); ?></strong>
                     <?php else: ?>
-                        <span style="color: var(--success-color);">₱0.00</span>
+                        <span class="ledger-balance-zero">₱0.00</span>
                     <?php endif; ?>
                 </td>
                 <td>
@@ -179,7 +179,7 @@ $customers = $conn->query($sql);
                 </td>
             </tr>
             <?php endwhile; ?>
-            <tr style="background: var(--primary-color); color: white; font-weight: bold; font-size: 15px;">
+            <tr class="table-row-total-primary">
                 <td colspan="10" class="text-right">TOTALS:</td>
                 <td class="text-right"><?php echo format_currency($total_lifetime); ?></td>
                 <td class="text-right"><?php echo format_currency($total_balance); ?></td>
@@ -194,32 +194,32 @@ $customers = $conn->query($sql);
 </table>
 
 <?php if ($customers->num_rows > 0): ?>
-<div style="margin-top: 30px; padding: 15px; background: var(--light-gray); border-radius: 5px;">
-    <h3 style="color: var(--primary-color); margin-bottom: 10px;">Payment Behavior Summary</h3>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+<div class="report-summary-box">
+    <h3>Payment Behavior Summary</h3>
+    <div class="report-summary-grid-4">
         <div>
             <strong>Total Active Customers:</strong> <?php echo number_format($total_customers); ?>
         </div>
         <div>
             <strong>Customers with Payments:</strong> 
-            <span style="color: var(--success-color);"><?php echo number_format($customers_with_payments); ?></span>
+            <span class="ledger-balance-zero"><?php echo number_format($customers_with_payments); ?></span>
         </div>
         <div>
             <strong>Never Paid:</strong> 
-            <span style="color: var(--danger-color);"><?php echo number_format($customers_no_payments); ?></span>
+            <span class="ledger-balance-positive"><?php echo number_format($customers_no_payments); ?></span>
         </div>
         <div>
             <strong>Payment Rate:</strong> 
             <?php echo $total_customers > 0 ? number_format(($customers_with_payments / $total_customers) * 100, 1) . '%' : 'N/A'; ?>
         </div>
     </div>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+    <div class="report-summary-sub">
         <div>
             <strong>Total Lifetime Collections:</strong> <?php echo format_currency($total_lifetime); ?>
         </div>
         <div>
             <strong>Total Outstanding Balance:</strong> 
-            <span style="color: var(--danger-color);"><?php echo format_currency($total_balance); ?></span>
+            <span class="ledger-balance-positive"><?php echo format_currency($total_balance); ?></span>
         </div>
         <div>
             <strong>Average per Customer:</strong> 
@@ -228,19 +228,19 @@ $customers = $conn->query($sql);
     </div>
 </div>
 
-<div style="margin-top: 20px; padding: 15px; background: #d1ecf1; border-left: 4px solid #17a2b8; border-radius: 5px;">
-    <h4 style="margin-bottom: 10px;">📊 Payment Status Categories:</h4>
-    <ul style="margin-left: 20px; line-height: 2;">
-        <li><strong style="color: var(--success-color);">Regular (Green):</strong> Paid within last 30 days</li>
-        <li><strong style="color: var(--dark-gray);">Moderate (Gray):</strong> Paid 31-60 days ago</li>
-        <li><strong style="color: var(--warning-color);">Irregular (Yellow):</strong> Paid 61-90 days ago - Follow-up needed</li>
-        <li><strong style="color: var(--danger-color);">Inactive (Red):</strong> 90+ days or never paid - Urgent action required</li>
+<div class="report-panel-info">
+    <h4>📊 Payment Status Categories:</h4>
+    <ul>
+        <li><strong>Regular (Green):</strong> Paid within last 30 days</li>
+        <li><strong>Moderate (Gray):</strong> Paid 31-60 days ago</li>
+        <li><strong>Irregular (Yellow):</strong> Paid 61-90 days ago - Follow-up needed</li>
+        <li><strong>Inactive (Red):</strong> 90+ days or never paid - Urgent action required</li>
     </ul>
 </div>
 
-<div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
-    <h4 style="margin-bottom: 10px;">⚠️ Action Items:</h4>
-    <ol style="margin-left: 20px; line-height: 2;">
+<div class="report-panel-warning">
+    <h4>⚠️ Action Items:</h4>
+    <ol>
         <li><strong>Never Paid:</strong> Contact immediately, verify service status</li>
         <li><strong>90+ Days:</strong> Send payment reminder, consider disconnection</li>
         <li><strong>60-90 Days:</strong> Follow-up call or message</li>
@@ -249,8 +249,8 @@ $customers = $conn->query($sql);
 </div>
 <?php endif; ?>
 
-<div style="margin-top: 40px; padding: 20px; border-top: 2px solid var(--primary-color);">
-    <p style="text-align: center; color: var(--dark-gray); font-size: 12px;">
+<div class="report-footer">
+    <p>
         This report tracks payment behavior to identify customers requiring follow-up. 
         Use this data to improve collection rates and maintain healthy customer relationships.
     </p>

@@ -31,16 +31,6 @@ $total_billed = 0; $total_paid = 0; $total_balance = 0;
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ledger - <?php echo htmlspecialchars($customer['subscriber_name']); ?></title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        @media print {
-            @page { size: letter; margin: 10mm; }
-            body * { visibility: hidden; }
-            .print-ledger, .print-ledger * { visibility: visible; }
-            .print-ledger { position: absolute; left: 0; top: 0; width: 100%; }
-            .no-print { display: none !important; }
-        }
-        @media screen { .print-ledger { display: none; } }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -54,7 +44,7 @@ $total_billed = 0; $total_paid = 0; $total_balance = 0;
                         <span class="badge badge-<?php echo $sc; ?>"><?php echo ucfirst(str_replace('_',' ',$customer['status'])); ?></span></div>
                 </div>
                 <div class="widget-content">
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;font-size:13px;">
+                    <div class="ledger-info-grid">
                         <div><strong>Account #:</strong> <?php echo $customer['account_number']; ?></div>
                         <div><strong>Address:</strong> <?php echo htmlspecialchars($customer['address']); ?></div>
                         <div><strong>Area:</strong> <?php echo htmlspecialchars($customer['area_name']??'N/A'); ?></div>
@@ -63,12 +53,12 @@ $total_billed = 0; $total_paid = 0; $total_balance = 0;
                         <div><strong>Contact:</strong> <?php echo $customer['tel_no']??'N/A'; ?></div>
                         <div><strong>Installed:</strong> <?php echo $customer['installation_date']?date('M d, Y',strtotime($customer['installation_date'])):'N/A'; ?></div>
                         <div><strong>Last Payment:</strong> <?php echo $last_payment?date('M d, Y',strtotime($last_payment)):'None'; ?></div>
-                        <div><strong>Current Balance:</strong> <span style="color:<?php echo $current_balance>0?'#d32f2f':'#28a745'; ?>;font-weight:bold;"><?php echo format_currency($current_balance); ?></span></div>
+                        <div><strong>Current Balance:</strong> <span class="<?php echo $current_balance>0?'ledger-balance-positive':'ledger-balance-zero'; ?>"><?php echo format_currency($current_balance); ?></span></div>
                     </div>
-                    <div style="margin-top:15px;display:flex;gap:8px;flex-wrap:wrap;">
+                    <div class="ledger-actions">
                         <a href="print_installation.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-primary btn-sm">🖨️ Installation Form</a>
                         <a href="print_billing_statement.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-secondary btn-sm">🖨️ Billing Statement</a>
-                        <a href="print_sketch.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-sm" style="background:#17a2b8;color:#fff;">🖨️ Print Sketch</a>
+                        <a href="print_sketch.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-sm btn-info">🖨️ Print Sketch</a>
                         <!-- <button onclick="window.print()" class="btn btn-sm" style="background:#6c757d;color:#fff;">🖨️ Print Ledger</button> -->
                     </div>
                 </div>
@@ -95,8 +85,8 @@ $total_billed = 0; $total_paid = 0; $total_balance = 0;
                             <td><?php $s=$b['status']=='paid'?'success':($b['status']=='partial'?'warning':'danger'); ?><span class="badge badge-<?php echo $s; ?>"><?php echo ucfirst($b['status']); ?></span></td>
                         </tr>
                         <?php endwhile; ?>
-                        <tr style="background:#f0f0f0;font-weight:bold;">
-                            <td colspan="5" style="text-align:right;">TOTAL:</td>
+                        <tr class="table-row-total">
+                            <td colspan="5" class="text-right">TOTAL:</td>
                             <td><?php echo format_currency($total_billed); ?></td>
                             <td><?php echo format_currency($total_paid); ?></td>
                             <td><?php echo format_currency($total_balance); ?></td><td></td>
@@ -109,7 +99,7 @@ $total_billed = 0; $total_paid = 0; $total_balance = 0;
             <?php if ($status_log && $status_log->num_rows > 0): ?>
             <div class="widget mb-3">
                 <div class="widget-header"><h2>Status Change History</h2></div>
-                <div class="widget-content" style="padding:0;">
+                <div class="widget-content widget-content-flush">
                     <table>
                         <thead><tr><th>Date</th><th>Time</th><th>Old Status</th><th>New Status</th><th>Staff</th><th>Remarks</th></tr></thead>
                         <tbody>
@@ -136,14 +126,14 @@ $total_billed = 0; $total_paid = 0; $total_balance = 0;
                 </div>
                 <div class="widget-content">
                     <?php while ($sk = $sketches->fetch_assoc()): ?>
-                    <div style="border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:10px;">
+                    <div class="sketch-card">
                         <?php if ($sk['sketch_type']=='upload' && $sk['file_path']): ?>
-                            <img src="<?php echo htmlspecialchars($sk['file_path']); ?>" style="max-width:100%;max-height:300px;border-radius:4px;">
+                            <img src="<?php echo htmlspecialchars($sk['file_path']); ?>" class="sketch-card-img">
                         <?php elseif ($sk['sketch_data']): ?>
-                            <img src="<?php echo $sk['sketch_data']; ?>" style="max-width:100%;max-height:300px;border-radius:4px;">
+                            <img src="<?php echo $sk['sketch_data']; ?>" class="sketch-card-img">
                         <?php endif; ?>
-                        <?php if ($sk['remarks']): ?><p style="margin-top:8px;color:#555;"><strong>Remarks:</strong> <?php echo htmlspecialchars($sk['remarks']); ?></p><?php endif; ?>
-                        <p style="font-size:11px;color:#999;margin-top:5px;">By: <?php echo htmlspecialchars($sk['creator_name']??'Unknown'); ?> | <?php echo date('M d, Y h:i A',strtotime($sk['created_at'])); ?></p>
+                        <?php if ($sk['remarks']): ?><p class="sketch-card-remarks"><strong>Remarks:</strong> <?php echo htmlspecialchars($sk['remarks']); ?></p><?php endif; ?>
+                        <p class="sketch-card-meta">By: <?php echo htmlspecialchars($sk['creator_name']??'Unknown'); ?> | <?php echo date('M d, Y h:i A',strtotime($sk['created_at'])); ?></p>
                     </div>
                     <?php endwhile; ?>
                 </div>
@@ -155,7 +145,7 @@ $total_billed = 0; $total_paid = 0; $total_balance = 0;
     </div>
     
     <!-- Print Ledger -->
-    <div class="print-ledger" style="font-family:Arial;font-size:10px;padding:20px;">
+    <div class="print-ledger">
         <img src="images/headerlogo.png" alt="NovaLink" style="max-height:55px;display:block;margin:0 auto 8px auto;">
         <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
             <tr>

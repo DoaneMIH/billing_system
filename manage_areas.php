@@ -190,8 +190,7 @@ $areas = $conn->query("SELECT a.*,
     
     <!-- Add Area Modal -->
     <div id="addModal" class="modal">
-        <div class="modal-content" style="position: absolute; top: 50%;
-        left: 50%; transform: translate(-50%, -50%);">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2>Add New Service Area</h2>
                 <button type="button" class="modal-close" onclick="closeAddModal()">&times;</button>
@@ -220,7 +219,7 @@ $areas = $conn->query("SELECT a.*,
     
     <!-- Edit Area Modal -->
     <div id="editModal" class="modal">
-        <div class="modal-content" style="position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2>Edit Service Area</h2>
                 <button type="button" class="modal-close" onclick="closeEditModal()">&times;</button>
@@ -249,7 +248,7 @@ $areas = $conn->query("SELECT a.*,
     </div>
     
     <!-- Delete Form (hidden) -->
-    <form id="deleteForm" method="POST" style="display: none;">
+    <form id="deleteForm" method="POST" class="d-none">
         <input type="hidden" name="action" value="delete">
         <input type="hidden" id="delete_area_id" name="area_id">
     </form>

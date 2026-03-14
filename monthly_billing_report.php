@@ -99,7 +99,7 @@ $total_balance = 0;
                 </td>
             </tr>
             <?php endwhile; ?>
-            <tr style="background: var(--light-gray); font-weight: bold; font-size: 15px;">
+            <tr class="table-row-total">
                 <td colspan="5" class="text-right">TOTAL:</td>
                 <td><?php echo format_currency($total_billed); ?></td>
                 <td><?php echo format_currency($total_paid); ?></td>
@@ -114,9 +114,9 @@ $total_balance = 0;
     </tbody>
 </table>
 
-<div style="margin-top: 30px; padding: 15px; background: var(--light-gray); border-radius: 5px;">
-    <h3 style="color: var(--primary-color); margin-bottom: 10px;">Summary</h3>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+<div class="report-summary-box">
+    <h3>Summary</h3>
+    <div class="report-summary-grid-3">
         <div>
             <strong>Total Customers:</strong> <?php echo $billings->num_rows; ?>
         </div>

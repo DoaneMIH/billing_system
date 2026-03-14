@@ -142,8 +142,10 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
         <?php include 'includes/sidebar.php'; ?>
         <main class="main-content">
             <div class="page-header">
+                <div>
                 <h1>Subscriber Management</h1>
                 <p>Manage subscriber accounts and subscriptions</p>
+                </div>
             </div>
             
             <?php if (isset($success)): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
@@ -157,9 +159,9 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
                     <?php endif; ?>
                 </div>
                 
-                <div style="padding:15px;border-bottom:1px solid var(--border-color);">
-                    <div class="filter-group" style="gap:10px;flex-wrap:wrap;">
-                        <input type="text" id="live-search" placeholder="Search subscribers..." autocomplete="off" style="flex:1;min-width:200px;padding:10px;border:1px solid #ddd;border-radius:6px;">
+                <div class="table-filter-bar">
+                    <div class="filter-group">
+                        <input type="text" id="live-search" placeholder="Search subscribers..." autocomplete="off" class="customer-search-input">
                         <select id="area-filter">
                             <option value="0">All Areas</option>
                             <?php $areas->data_seek(0); while ($a = $areas->fetch_assoc()): ?>
@@ -193,7 +195,7 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
                                 <td><?php echo htmlspecialchars($c['package_name'] ?? 'N/A'); ?></td>
                                 <td><?php echo format_currency($c['monthly_fee']); ?></td>
                                 <td><span class="badge badge-<?php echo $sc; ?>"><?php echo ucfirst(str_replace('_',' ',$c['status'])); ?></span></td>
-                                <td style="white-space:nowrap;">
+                                <td class="col-nowrap">
                                     <a href="customer_ledger.php?id=<?php echo $c['customer_id']; ?>" class="btn btn-sm btn-primary">Ledger</a>
                                     <a href="print_installation.php?id=<?php echo $c['customer_id']; ?>" target="_blank" class="btn btn-sm btn-secondary">Install Form</a>
                                     <?php if ($_SESSION['role'] == 'admin'): ?>
@@ -205,7 +207,7 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
                                         <?php elseif ($c['status'] == 'disconnected' || $c['status'] == 'hold_disconnection'): ?>
                                         <button onclick="statusAction(<?php echo $c['customer_id']; ?>,'reconnect')" class="btn btn-sm btn-success">Reconnect</button>
                                         <?php endif; ?>
-                                        <button onclick="openSketchModal(<?php echo $c['customer_id']; ?>)" class="btn btn-sm" style="background:#6c757d;color:#fff;">Sketch</button>
+                                        <button onclick="openSketchModal(<?php echo $c['customer_id']; ?>)" class="btn btn-sm btn-secondary">Sketch</button>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -221,7 +223,7 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
     
     <!-- Add Subscriber Modal -->
     <div id="addCustomerModal" class="modal">
-        <div class="modal-content" style="max-width:700px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-height:90vh;overflow-y:auto;">
+        <div class="modal-content modal-content-lg">
             <div class="modal-header"><h2>Add New Subscriber</h2><button class="modal-close" onclick="this.closest('.modal').classList.remove('show')">&times;</button></div>
             <form method="POST"><div class="modal-body">
                 <input type="hidden" name="action" value="add">
@@ -259,7 +261,7 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
     
     <!-- Sketch Upload Modal -->
     <div id="sketchModal" class="modal">
-        <div class="modal-content" style="max-width:600px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+        <div class="modal-content modal-content-md">
             <div class="modal-header"><h2>Installation Sketch / Photo</h2><button class="modal-close" onclick="this.closest('.modal').classList.remove('show')">&times;</button></div>
             <form method="POST" enctype="multipart/form-data"><div class="modal-body">
                 <input type="hidden" name="action" value="upload_sketch">
@@ -267,9 +269,9 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
                 <div class="form-group"><label>Upload Photo/Sketch</label><input type="file" name="sketch_file" accept="image/*"></div>
                 <div class="form-group">
                     <label>Or Draw Sketch Below:</label>
-                    <canvas id="sketchCanvas" width="500" height="300" style="border:2px solid #333;cursor:crosshair;display:block;background:#fff;"></canvas>
+                    <canvas id="sketchCanvas" width="500" height="300" ></canvas>
                     <input type="hidden" id="sketch_data" name="sketch_data">
-                    <div style="margin-top:5px;">
+                    <div class="mt-1">
                         <button type="button" onclick="clearCanvas()" class="btn btn-sm btn-secondary">Clear Drawing</button>
                         <button type="button" onclick="saveCanvas()" class="btn btn-sm btn-primary">Save Drawing</button>
                     </div>
@@ -297,15 +299,15 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
             fetch(`ajax/search_customers.php?q=${encodeURIComponent(q)}&area=${areaFilter.value}&status=${statusFilter.value}`)
                 .then(r => r.json())
                 .then(customers => displayCustomers(customers, q))
-                .catch(() => { tableContainer.innerHTML = '<div style="padding:30px;text-align:center;color:red;">Error loading</div>'; });
+                .catch(() => { tableContainer.innerHTML = '<div class="text-center" style="padding:30px;color:red;">Error loading</div>'; });
         }
         
         function displayCustomers(customers, query) {
-            if (customers.length === 0) { tableContainer.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No subscribers found</div>'; return; }
+            if (customers.length === 0) { tableContainer.innerHTML = '<div class="text-center no-activity">No subscribers found</div>'; return; }
             let html = '<table><thead><tr><th>Account #</th><th>Subscriber</th><th>Address</th><th>Area</th><th>Package</th><th>Monthly Fee</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
             customers.forEach(c => {
                 const sc = c.status==='active'?'success':c.status==='disconnected'?'danger':c.status==='reconnected'?'info':c.status==='pending_installation'?'warning':'secondary';
-                html += `<tr><td>${hl(c.account_number,query)}</td><td><strong>${hl(c.subscriber_name,query)}</strong></td><td>${hl(c.address,query)}</td><td>${c.area_name||'N/A'}</td><td>${c.package_name||'N/A'}</td><td>₱${parseFloat(c.monthly_fee).toFixed(2)}</td><td><span class="badge badge-${sc}">${c.status.replace(/_/g,' ')}</span></td><td style="white-space:nowrap;">
+                html += `<tr><td>${hl(c.account_number,query)}</td><td><strong>${hl(c.subscriber_name,query)}</strong></td><td>${hl(c.address,query)}</td><td>${c.area_name||'N/A'}</td><td>${c.package_name||'N/A'}</td><td>₱${parseFloat(c.monthly_fee).toFixed(2)}</td><td><span class="badge badge-${sc}">${c.status.replace(/_/g,' ')}</span></td><td class="col-nowrap">
                     <a href="customer_ledger.php?id=${c.customer_id}" class="btn btn-sm btn-primary">Ledger</a>
                     <a href="print_installation.php?id=${c.customer_id}" target="_blank" class="btn btn-sm btn-secondary">Install Form</a>`;
                 if (isAdmin) {

@@ -31,30 +31,24 @@ $total_unpaid = 0; $total_customers = 0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unpaid Bills - AR NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        @media print {
-            .no-print, .main-header, .sidebar, .filter-section, .page-header, .btn, .widget { display: none !important; }
-            .container { display: block !important; }
-            .main-content { padding: 0 !important; margin: 0 !important; }
-            body { background: white !important; }
-            .print-header { display: block !important; }
-            .actions-col { display: none !important; }
-        }
-        @media screen { .print-header { display: none; } }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
     <div class="container">
         <?php include 'includes/sidebar.php'; ?>
         <main class="main-content">
-            <div class="page-header no-print"><h1>Unpaid Subscriptions</h1><p>View subscribers with outstanding balance</p></div>
+            <div class="page-header no-print">
+                <div>
+                <h1>Unpaid Subscriptions</h1>
+                <p>View subscribers with outstanding balance</p>
+                </div>
+            </div>
             
             <!-- Print-only header -->
-            <div class="print-header" style="text-align:center;margin-bottom:15px;">
-                <img src="images/headerlogo.png" alt="NovaLink" style="max-height:60px;display:block;margin:0 auto 8px auto;">
-                <h2 style="font-size:16px;margin:0;">UNPAID SUBSCRIPTIONS REPORT</h2>
-                <p style="font-size:11px;color:#666;">Generated: <?php echo date('F d, Y h:i A'); ?></p>
+            <div class="print-header text-center mb-2">
+                <img src="images/headerlogo.png" alt="NovaLink" class="print-header-logo">
+                <h2>UNPAID SUBSCRIPTIONS REPORT</h2>
+                <p class="text-muted">Generated: <?php echo date('F d, Y h:i A'); ?></p>
             </div>
             
             <div class="table-container">
@@ -63,7 +57,7 @@ $total_unpaid = 0; $total_customers = 0;
                     <button onclick="window.print()" class="btn btn-primary">🖨️ Print Report</button>
                 </div>
                 
-                <div style="padding:20px;border-bottom:1px solid var(--border-color);" class="filter-section no-print">
+                <div class="table-filter-bar filter-section no-print">
                     <form method="GET" class="filter-group">
                         <select name="area"><option value="0">All Areas</option>
                             <?php while ($area = $areas->fetch_assoc()): ?>
@@ -91,7 +85,7 @@ $total_unpaid = 0; $total_customers = 0;
                     </tr></thead>
                     <tbody>
                         <?php if ($result->num_rows > 0): while ($row = $result->fetch_assoc()): $total_unpaid += $row['net_amount']; $total_customers++; ?>
-                        <tr <?php echo $row['days_overdue']>30?'style="background:#fff3cd;"':''; ?>>
+                        <tr class="<?php echo $row['days_overdue']>30?'table-row-overdue':''; ?>">
                             <td><?php echo htmlspecialchars($row['account_number']); ?></td>
                             <td><?php echo htmlspecialchars($row['subscriber_name']); ?></td>
                             <td><?php echo htmlspecialchars($row['address']); ?></td>
@@ -104,7 +98,7 @@ $total_unpaid = 0; $total_customers = 0;
                             <td class="actions-col no-print"><a href="customer_ledger.php?id=<?php echo $row['customer_id']; ?>" class="btn btn-sm btn-primary">Ledger</a></td>
                         </tr>
                         <?php endwhile; ?>
-                        <tr style="background:var(--light-gray);font-weight:bold;">
+                        <tr class="table-row-total">
                             <td colspan="6" class="text-right">TOTAL UNPAID (<?php echo $total_customers; ?> subscribers):</td>
                             <td><?php echo format_currency($total_unpaid); ?></td>
                             <td colspan="3"></td>

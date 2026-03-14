@@ -3,7 +3,7 @@ require_once 'config.php';
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
 $conn = getDBConnection();
 
-$stats = ['total_customers'=>0, 'active_customers'=>0, 'disconnected'=>0, 'total_unpaid'=>0, 'monthly_revenue'=>0, 'pending'=>0];
+$stats = ['total_customers'=>0,'active_customers'=>0,'disconnected'=>0,'total_unpaid'=>0,'monthly_revenue'=>0,'pending'=>0];
 $stats['total_customers'] = $conn->query("SELECT COUNT(*) as t FROM customers")->fetch_assoc()['t'];
 $stats['active_customers'] = $conn->query("SELECT COUNT(*) as t FROM customers WHERE status='active'")->fetch_assoc()['t'];
 $stats['disconnected'] = $conn->query("SELECT COUNT(*) as t FROM customers WHERE status='disconnected'")->fetch_assoc()['t'];
@@ -31,24 +31,18 @@ $conn->close();
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - AR NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .search-container { position: relative; margin-bottom: 20px; }
-        .search-container input { width: 100%; padding: 12px 16px 12px 40px; border: 2px solid #ddd; border-radius: 10px; font-size: 15px; transition: all 0.3s; }
-        .search-container input:focus { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0,102,204,0.1); outline: none; }
-        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; }
-        .search-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 400px; overflow-y: auto; z-index: 1000; display: none; }
-        .search-result-item { padding: 10px 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .search-result-item:hover { background: #f5f9ff; }
-        .search-result-item .name { font-weight: bold; color: #333; }
-        .search-result-item .meta { font-size: 12px; color: #666; }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
     <div class="container">
         <?php include 'includes/sidebar.php'; ?>
         <main class="main-content">
-            <div class="page-header"><h1>Dashboard</h1><p>Welcome back, <?php echo htmlspecialchars($_SESSION['full_name']); ?>!</p></div>
+            <div class="page-header">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Welcome back, <?php echo htmlspecialchars($_SESSION['full_name']); ?>!</p>
+                </div>
+            </div>
             
             <div class="search-container">
                 <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -82,19 +76,34 @@ $conn->close();
                 
                 <div class="widget">
                     <div class="widget-header"><h2>Recent Activity</h2><span class="badge badge-secondary"><?php echo number_format($total_records); ?> total</span></div>
-                    <div class="widget-content" style="padding:0;">
+                    <div class="widget-content widget-content-flush">
                         <?php if ($activity && $activity->num_rows > 0): ?>
-                        <div class="table-responsive"><table class="activity-table"><thead><tr><th style="width:40px;"></th><?php if ($_SESSION['role']=='admin'): ?><th style="width:130px;">User</th><?php endif; ?><th>Action</th><th style="width:100px;">Table</th><th style="width:160px;">Date</th></tr></thead><tbody>
-                            <?php while ($a = $activity->fetch_assoc()): ?>
-                            <tr>
-                                <td class="text-center"><?php echo match($a['action']){'LOGIN'=>'🔵','LOGOUT'=>'⚪','RECORD_PAYMENT'=>'💳','ADD_CUSTOMER'=>'👤','GENERATE_BILLING'=>'📄','DISCONNECT_CUSTOMER'=>'🔴','RECONNECT_CUSTOMER'=>'🟢','CONFIRM_INSTALLATION'=>'✅',default=>'🟣'}; ?></td>
-                                <?php if ($_SESSION['role']=='admin'): ?><td><strong style="font-size:12px;"><?php echo htmlspecialchars($a['full_name']??$a['username']); ?></strong></td><?php endif; ?>
-                                <td style="font-size:12px;"><?php echo htmlspecialchars($a['description']); ?></td>
-                                <td><span class="badge badge-secondary" style="font-size:10px;"><?php echo htmlspecialchars($a['table_name']); ?></span></td>
-                                <td style="font-size:11px;color:#666;"><?php echo date('M d, Y h:i A', strtotime($a['created_at'])); ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </tbody></table></div>
+                        <div class="table-responsive">
+                            <table class="activity-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40px;"></th>
+                                        <?php if ($_SESSION['role']=='admin'): ?><th style="width:130px;">User</th><?php endif; ?>
+                                        <th>Action</th>
+                                        <th style="width:100px;">Table</th>
+                                        <th style="width:160px;">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php while ($a = $activity->fetch_assoc()): ?>
+                                    <tr>
+                                        <td class="text-center"><?php echo match($a['action']){'LOGIN'=>'🔵','LOGOUT'=>'⚪','RECORD_PAYMENT'=>'💳','ADD_CUSTOMER'=>'👤','GENERATE_BILLING'=>'📄','DISCONNECT_CUSTOMER'=>'🔴','RECONNECT_CUSTOMER'=>'🟢','CONFIRM_INSTALLATION'=>'✅',default=>'🟣'}; ?></td>
+                                        <?php if ($_SESSION['role']=='admin'): ?>
+                                        <td><strong class="activity-user-name"><?php echo htmlspecialchars($a['full_name']??$a['username']); ?></strong></td>
+                                        <?php endif; ?>
+                                        <td class="activity-description"><?php echo htmlspecialchars($a['description']); ?></td>
+                                        <td><span class="badge badge-secondary activity-table-badge"><?php echo htmlspecialchars($a['table_name']); ?></span></td>
+                                        <td class="activity-date"><?php echo date('M d, Y h:i A', strtotime($a['created_at'])); ?></td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
                         <?php if ($total_pages > 1): ?>
                         <div class="pagination-container"><div class="pagination">
                             <?php if ($page > 1): ?><a href="?page=<?php echo $page-1; ?>" class="pagination-btn">←</a><?php endif; ?>
@@ -104,7 +113,7 @@ $conn->close();
                             <?php if ($page < $total_pages): ?><a href="?page=<?php echo $page+1; ?>" class="pagination-btn">→</a><?php endif; ?>
                         </div></div>
                         <?php endif; ?>
-                        <?php else: ?><div style="padding:30px;text-align:center;color:#999;">No recent activity</div><?php endif; ?>
+                        <?php else: ?><div class="no-activity">No recent activity</div><?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -124,7 +133,7 @@ $conn->close();
                 fetch(`ajax/dashboard_search.php?q=${encodeURIComponent(query)}`)
                     .then(r => r.json())
                     .then(data => {
-                        if (data.length === 0) { searchResults.innerHTML = '<div style="padding:15px;text-align:center;color:#999;">No results found</div>'; }
+                        if (data.length === 0) { searchResults.innerHTML = '<div class="search-no-results">No results found</div>'; }
                         else { searchResults.innerHTML = data.map(item => `<div class="search-result-item" onclick="window.location='${item.url}'"><div><span class="name">${item.type==='customer'?'👤':'💳'} ${item.name}</span><br><span class="meta">${item.detail}</span></div><span class="badge badge-${item.status_class||'secondary'}">${item.status||''}</span></div>`).join(''); }
                         searchResults.style.display = 'block';
                     });

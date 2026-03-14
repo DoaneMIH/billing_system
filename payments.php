@@ -60,15 +60,6 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payments - AR NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        @media print {
-            .no-print { display: none !important; }
-            .print-section { display: block !important; }
-            body * { visibility: hidden; }
-            .daily-report, .daily-report * { visibility: visible; }
-            .daily-report { position: absolute; left: 0; top: 0; width: 100%; }
-        }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -76,8 +67,10 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
         <?php include 'includes/sidebar.php'; ?>
         <main class="main-content">
             <div class="page-header">
+                <div>
                 <h1>Payment Processing</h1>
                 <p>Record payments and generate daily reports</p>
+                </div>
             </div>
             
             <?php if (isset($success)): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
@@ -92,9 +85,9 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
                             <div class="form-group">
                                 <label>Search Subscriber *</label>
                                 <input type="text" id="search_customer" placeholder="Type to search..." autocomplete="off">
-                                <div id="customer_results" style="position:relative;"></div>
+                                <div id="customer_results" class="position-relative"></div>
                                 <input type="hidden" id="customer_id" name="customer_id" required>
-                                <div id="selected_customer" style="margin-top:8px;padding:8px;background:#e7f3ff;border-radius:5px;display:none;">
+                                <div id="selected_customer" class="selected-customer-info">
                                     <strong>Selected:</strong> <span id="selected_customer_name"></span>
                                 </div>
                             </div>
@@ -103,7 +96,7 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
                                 <select id="billing_period" name="billing_id" required disabled>
                                     <option value="">Select subscriber first</option>
                                 </select>
-                                <div id="billing_info" style="margin-top:5px;font-size:12px;color:#666;"></div>
+                                <div id="billing_info" class="billing-info-hint"></div>
                             </div>
                         </div>
                         <div class="form-row">
@@ -128,8 +121,8 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
             <div class="widget mb-3">
                 <div class="widget-header">
                     <h2>Daily Payment Report</h2>
-                    <div style="display:flex;gap:8px;align-items:center;">
-                        <form method="GET" style="display:flex;gap:8px;">
+                    <div class="daily-report-actions">
+                        <form method="GET" class="d-flex gap-8">
                             <input type="date" name="report_date" value="<?php echo $report_date; ?>">
                             <button type="submit" class="btn btn-secondary btn-sm">View</button>
                         </form>
@@ -137,7 +130,7 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
                     </div>
                 </div>
                 <div class="widget-content">
-                    <div style="display:flex;gap:20px;margin-bottom:10px;">
+                    <div class="daily-summary-bar">
                         <div><strong>Date:</strong> <?php echo date('F d, Y', strtotime($report_date)); ?></div>
                         <div><strong>Total Payments:</strong> <?php echo $daily_count; ?></div>
                         <div><strong>Total Collections:</strong> <?php echo format_currency($daily_total); ?></div>
@@ -158,8 +151,8 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
                             <?php endwhile; else: ?>
                             <tr><td colspan="7" class="text-center">No payments for this date</td></tr>
                             <?php endif; ?>
-                            <tr style="background:#f0f0f0;font-weight:bold;">
-                                <td colspan="4" style="text-align:right;">TOTAL:</td>
+                            <tr class="table-row-summary">
+                                <td colspan="4" class="text-right">TOTAL:</td>
                                 <td><?php echo format_currency($daily_total); ?></td>
                                 <td colspan="2"><?php echo $daily_count; ?> payment(s)</td>
                             </tr>
@@ -198,7 +191,7 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
     </div>
     
     <!-- Print-only daily report -->
-    <div class="daily-report" style="display:none;font-family:Arial;padding:20px;">
+    <div class="daily-report">
         <div style="text-align:center;margin-bottom:15px;">
             <h2 style="margin:0;">NOVA LINK DIGITAL SYSTEMS CORP.</h2>
             <p style="margin:2px 0;">F. Palmares St., Passi City, Iloilo</p>
@@ -206,7 +199,7 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
             <p><strong>Date: <?php echo date('F d, Y', strtotime($report_date)); ?></strong></p>
         </div>
         <table style="width:100%;border-collapse:collapse;font-size:11px;">
-            <thead><tr style="background:#002060;color:white;">
+            <thead><tr>
                 <th style="border:1px solid #333;padding:5px;">OR #</th><th style="border:1px solid #333;padding:5px;">Customer</th>
                 <th style="border:1px solid #333;padding:5px;">Account #</th><th style="border:1px solid #333;padding:5px;">Period</th>
                 <th style="border:1px solid #333;padding:5px;">Amount</th><th style="border:1px solid #333;padding:5px;">Method</th>
@@ -224,14 +217,14 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
                     <td style="border:1px solid #ccc;padding:4px;"><?php echo $dp['cashier_name']??''; ?></td>
                 </tr>
                 <?php endwhile; ?>
-                <tr style="font-weight:bold;background:#f0f0f0;">
+                <tr class="table-row-summary">
                     <td colspan="4" style="border:1px solid #333;padding:5px;text-align:right;">TOTAL COLLECTIONS:</td>
                     <td style="border:1px solid #333;padding:5px;text-align:right;">₱<?php echo number_format($daily_total,2); ?></td>
                     <td colspan="2" style="border:1px solid #333;padding:5px;"><?php echo $daily_count; ?> payment(s)</td>
                 </tr>
             </tbody>
         </table>
-        <div style="margin-top:40px;display:flex;justify-content:space-between;">
+        <div class="d-flex mt-2 justify-between">
             <div>Prepared by: ___________________</div>
             <div>Verified by: ___________________</div>
         </div>

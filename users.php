@@ -98,8 +98,10 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
         
         <main class="main-content">
             <div class="page-header">
+                <div>
                 <h1>User Management</h1>
                 <p>Manage system users and permissions</p>
+                </div>
             </div>
             
             <?php if (isset($success)): ?>
@@ -163,7 +165,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
                             <td><?php echo $user['last_login'] ? date('M d, Y H:i', strtotime($user['last_login'])) : 'Never'; ?></td>
                             <td>
                                 <?php if ($user['user_id'] != $_SESSION['user_id']): ?>
-                                <form method="POST" style="display: inline-block; margin: 0;">
+                                <form method="POST" class="d-inline">
                                     <input type="hidden" name="action" value="toggle_status">
                                     <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
                                     <input type="hidden" name="status" value="<?php echo $user['status']; ?>">
@@ -199,7 +201,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
     
     <!-- Add User Modal -->
     <div id="addUserModal" class="modal">
-        <div class="modal-content" style="position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); ">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2>Add New User</h2>
                 <button type="button" class="modal-close" onclick="closeModal('addUserModal')">&times;</button>
@@ -249,7 +251,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
     
     <!-- Change Password Modal -->
     <div id="changePasswordModal" class="modal">
-        <div class="modal-content" style="max-width: 600px; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); ">
+        <div class="modal-content modal-content-md">
             <div class="modal-header">
                 <h2>Change User Password</h2>
                 <button type="button" class="modal-close" onclick="closeModal('changePasswordModal')">&times;</button>
@@ -261,7 +263,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
                     
                     <div class="form-group">
                         <label>Username:</label>
-                        <input type="text" id="password_username" disabled style="background: #f5f5f5;">
+                        <input type="text" id="password_username" disabled>
                     </div>
                     
                     <div class="form-group">
@@ -284,7 +286,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
     </div>
     
     <!-- Delete Form (hidden) -->
-    <form id="deleteUserForm" method="POST" style="display: none;">
+    <form id="deleteUserForm" method="POST" class="d-none">
         <input type="hidden" name="action" value="delete">
         <input type="hidden" id="delete_user_id" name="user_id">
     </form>

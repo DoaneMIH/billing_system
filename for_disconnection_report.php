@@ -97,9 +97,9 @@ while ($row = $all_customers->fetch_assoc()) {
     </div>
 </div>
 
-<div style="margin-bottom: 20px; padding: 15px; background: #f8d7da; border-left: 4px solid #dc3545; border-radius: 5px;">
-    <h3 style="color: #721c24; margin-bottom: 10px;">🚫 URGENT: Disconnection Action Required</h3>
-    <p style="margin: 0;">
+<div class="report-alert-danger">
+    <h3>🚫 URGENT: Disconnection Action Required</h3>
+    <p>
         The following <strong><?php echo $total_to_disconnect; ?> customer(s)</strong> meet the criteria for service disconnection.
         Total outstanding balance: <strong><?php echo format_currency($total_balance_loss); ?></strong>
     </p>
@@ -107,7 +107,7 @@ while ($row = $all_customers->fetch_assoc()) {
 
 <table>
     <thead>
-        <tr style="background: #dc3545; color: white;">
+        <tr class="table-row-total-danger">
             <th>Account #</th>
             <th>Customer Name</th>
             <th>Address</th>
@@ -124,7 +124,7 @@ while ($row = $all_customers->fetch_assoc()) {
     <tbody>
         <?php if (count($disconnection_candidates) > 0): ?>
             <?php foreach ($disconnection_candidates as $row): ?>
-            <tr style="background: <?php echo $row['days_overdue'] > 90 ? '#f8d7da' : '#fff3cd'; ?>;">
+            <tr class="<?php echo $row['days_overdue'] > 90 ? 'table-row-critical' : 'table-row-overdue'; ?>">
                 <td><strong><?php echo htmlspecialchars($row['account_number']); ?></strong></td>
                 <td><?php echo htmlspecialchars($row['subscriber_name']); ?></td>
                 <td><?php echo htmlspecialchars($row['address']); ?></td>
@@ -138,19 +138,19 @@ while ($row = $all_customers->fetch_assoc()) {
                     <span class="badge badge-danger"><?php echo $row['days_overdue']; ?> days</span>
                 </td>
                 <td><?php echo $row['last_payment_date'] ? date('M d, Y', strtotime($row['last_payment_date'])) : 'No payments'; ?></td>
-                <td class="text-right"><strong style="color: #dc3545;"><?php echo format_currency($row['total_balance']); ?></strong></td>
+                <td class="text-right"><strong class="ledger-balance-positive"><?php echo format_currency($row['total_balance']); ?></strong></td>
                 <td><?php echo htmlspecialchars($row['disconnection_reason']); ?></td>
             </tr>
             <?php endforeach; ?>
-            <tr style="background: var(--danger-color); color: white; font-weight: bold; font-size: 15px;">
+            <tr class="table-row-total-danger">
                 <td colspan="9" class="text-right">TOTAL BALANCE AT RISK:</td>
                 <td class="text-right"><?php echo format_currency($total_balance_loss); ?></td>
                 <td></td>
             </tr>
         <?php else: ?>
             <tr>
-                <td colspan="11" class="text-center" style="padding: 30px;">
-                    <span style="color: var(--success-color); font-size: 18px;">
+                <td colspan="11" class="text-center">
+                    <span class="ledger-balance-zero">
                         ✓ No customers currently meet disconnection criteria
                     </span>
                 </td>
@@ -160,9 +160,9 @@ while ($row = $all_customers->fetch_assoc()) {
 </table>
 
 <?php if (count($disconnection_candidates) > 0): ?>
-<div style="margin-top: 30px; padding: 15px; background: var(--light-gray); border-radius: 5px;">
-    <h3 style="color: var(--primary-color); margin-bottom: 10px;">Disconnection Summary</h3>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+<div class="report-summary-box">
+    <h3>Disconnection Summary</h3>
+    <div class="report-summary-grid-4">
         <div>
             <strong>Total for Disconnection:</strong> <?php echo number_format($total_to_disconnect); ?> customers
         </div>
@@ -186,9 +186,9 @@ while ($row = $all_customers->fetch_assoc()) {
     </div>
 </div>
 
-<div style="margin-top: 20px; padding: 15px; background: #d1ecf1; border-left: 4px solid #17a2b8; border-radius: 5px;">
-    <h4 style="margin-bottom: 10px;">📋 Recommended Actions:</h4>
-    <ol style="margin-left: 20px; line-height: 2;">
+<div class="report-panel-info">
+    <h4>📋 Recommended Actions:</h4>
+    <ol>
         <li><strong>Send Final Notice:</strong> Issue disconnection warning via SMS/Letter</li>
         <li><strong>Grace Period:</strong> Allow 5-7 days for payment</li>
         <li><strong>Document Attempts:</strong> Log all communication with customer</li>
@@ -198,17 +198,17 @@ while ($row = $all_customers->fetch_assoc()) {
     </ol>
 </div>
 
-<div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
-    <h4 style="margin-bottom: 10px;">⚠️ Disconnection Criteria:</h4>
-    <ul style="margin-left: 20px; line-height: 2;">
+<div class="report-panel-warning">
+    <h4>⚠️ Disconnection Criteria:</h4>
+    <ul>
         <li><strong>Active Status:</strong> 60 or more days overdue</li>
         <li><strong>Hold Disconnection Status:</strong> 45 or more days overdue (grace period expired)</li>
     </ul>
 </div>
 <?php endif; ?>
 
-<div style="margin-top: 40px; padding: 20px; border-top: 2px solid var(--danger-color);">
-    <p style="text-align: center; color: var(--dark-gray); font-size: 12px;">
+<div class="report-footer report-footer-danger">
+    <p>
         <strong>CONFIDENTIAL REPORT:</strong> This document contains sensitive customer information and recommended disconnection actions.
         Handle in accordance with company policies and customer privacy guidelines.
     </p>

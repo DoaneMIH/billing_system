@@ -19,7 +19,12 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
     <div class="container">
         <?php include 'includes/sidebar.php'; ?>
         <main class="main-content">
-            <div class="page-header"><h1>Bulk Printing</h1><p>Print multiple billing statements or installation forms</p></div>
+            <div class="page-header">
+                <div>
+                    <h1>Bulk Printing</h1>
+                    <p>Print multiple billing statements or installation forms</p>
+                </div>
+            </div>
             
             <div class="dashboard-widgets">
                 <!-- Bulk Billing Statements -->
@@ -116,7 +121,7 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
                     <div class="form-group">
                         <label>Search Subscriber</label>
                         <input type="text" id="print-search" placeholder="Type subscriber name or account #..." autocomplete="off">
-                        <div id="print-results" style="margin-top:10px;"></div>
+                        <div id="print-results" class="mt-1"></div>
                     </div>
                 </div>
             </div>
@@ -137,12 +142,9 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
             const form = document.getElementById('bulkInstallForm');
             const status = form.querySelector('[name=inst_status]').value;
             const area = form.querySelector('[name=inst_area]').value;
-            // Fetch customer IDs and open print pages
             let url = `ajax/search_customers.php?q=&status=${status}&area=${area}`;
             fetch(url).then(r=>r.json()).then(customers => {
                 if (customers.length === 0) { alert('No subscribers found with these filters.'); return; }
-                const ids = customers.map(c => c.customer_id).join(',');
-                // Open each in sequence (or combined page)
                 customers.forEach((c, i) => {
                     setTimeout(() => window.open(`print_installation.php?id=${c.customer_id}`, '_blank'), i * 200);
                 });
@@ -161,7 +163,7 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
                     .then(customers => {
                         let html = '';
                         customers.forEach(c => {
-                            html += `<div style="padding:8px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;">
+                            html += `<div class="search-result-item">
                                 <div><strong>${c.subscriber_name}</strong> (${c.account_number})</div>
                                 <div>
                                     <a href="print_billing_statement.php?id=${c.customer_id}" target="_blank" class="btn btn-sm btn-primary">Print SOA</a>
@@ -169,7 +171,7 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
                                 </div>
                             </div>`;
                         });
-                        document.getElementById('print-results').innerHTML = html || '<div style="padding:10px;color:#999;">No results</div>';
+                        document.getElementById('print-results').innerHTML = html || '<div class="search-no-results">No results</div>';
                     });
             }, 300);
         });

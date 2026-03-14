@@ -122,18 +122,6 @@ if (isset($_GET['err'])) $error = $_GET['err'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Packages - AR NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* Searchable Combo Dropdown */
-        .combo-container { position: relative; }
-        .combo-input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
-        .combo-input:focus { border-color: #0066cc; outline: none; box-shadow: 0 0 0 3px rgba(0,102,204,0.1); }
-        .combo-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 6px 6px; max-height: 220px; overflow-y: auto; z-index: 100; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-        .combo-dropdown.show { display: block; }
-        .combo-option { padding: 9px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f5f5f5; transition: background 0.15s; }
-        .combo-option:hover, .combo-option.highlighted { background: #e8f0fe; }
-        .combo-option.add-new { color: #0066cc; font-weight: bold; font-style: italic; border-top: 2px solid #e0e0e0; }
-        .combo-option .match { background: #fff3cd; font-weight: bold; border-radius: 2px; padding: 0 1px; }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -149,8 +137,8 @@ if (isset($_GET['err'])) $error = $_GET['err'];
             
             <?php if ($view_package): ?>
             <!-- ===== MATERIALS SECTION ===== -->
-            <div class="table-container" style="margin-bottom:20px;border:2px solid #17a2b8;">
-                <div class="table-header" style="background:#e8f4f8;">
+            <div class="table-container materials-table-container">
+                <div class="table-header materials-table-header">
                     <h2>📦 Installation Materials — <?php echo htmlspecialchars($view_package['package_name']); ?> (<?php echo $view_package['bandwidth_mbps']; ?> Mbps)</h2>
                     <div class="table-actions">
                         <button onclick="openAddMaterialModal()" class="btn btn-primary btn-sm">+ Add Material</button>
@@ -176,7 +164,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
                             </td>
                         </tr>
                         <?php endforeach; else: ?>
-                        <tr><td colspan="5" class="text-center" style="padding:25px;color:#888;">No materials yet. Click <strong>"+ Add Material"</strong> to begin.</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted">No materials yet. Click <strong>"+ Add Material"</strong> to begin.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -198,7 +186,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
                             <td><span class="badge badge-info"><?php echo $p['bandwidth_mbps']; ?> Mbps</span></td>
                             <td><strong><?php echo format_currency($p['monthly_fee']); ?></strong></td>
                             <td><?php echo htmlspecialchars($p['description'] ?? 'N/A'); ?></td>
-                            <td><a href="manage_packages.php?view_materials=<?php echo $p['package_id']; ?>" class="btn btn-sm" style="background:#17a2b8;color:#fff;"><?php echo $mc; ?> items</a></td>
+                            <td><a href="manage_packages.php?view_materials=<?php echo $p['package_id']; ?>" class="btn btn-sm btn-info"><?php echo $mc; ?> items</a></td>
                             <td><?php echo $p['customer_count'] > 0 ? '<span class="badge badge-primary">'.$p['customer_count'].'</span>' : '<span class="badge badge-secondary">0</span>'; ?></td>
                             <td><span class="badge badge-<?php echo $p['status']=='active'?'success':'secondary'; ?>"><?php echo ucfirst($p['status']); ?></span></td>
                             <td>
@@ -223,7 +211,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
     
     <!-- ===== ADD PACKAGE MODAL ===== -->
     <div id="addModal" class="modal">
-        <div class="modal-content" style="max-width:600px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+        <div class="modal-content modal-content-md">
             <div class="modal-header"><h2>Add New Package</h2><button class="modal-close" onclick="this.closest('.modal').classList.remove('show')">&times;</button></div>
             <form method="POST"><div class="modal-body">
                 <input type="hidden" name="action" value="add">
@@ -239,7 +227,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
     
     <!-- ===== EDIT PACKAGE MODAL ===== -->
     <div id="editModal" class="modal">
-        <div class="modal-content" style="max-width:600px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+        <div class="modal-content modal-content-md">
             <div class="modal-header"><h2>Edit Package</h2><button class="modal-close" onclick="this.closest('.modal').classList.remove('show')">&times;</button></div>
             <form method="POST"><div class="modal-body">
                 <input type="hidden" name="action" value="edit">
@@ -257,7 +245,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
     
     <!-- ===== ADD MATERIAL MODAL (with searchable dropdown) ===== -->
     <div id="addMaterialModal" class="modal">
-        <div class="modal-content" style="max-width:520px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+        <div class="modal-content modal-content-sm">
             <div class="modal-header"><h2>Add Material</h2><button class="modal-close" onclick="closeMaterialModal()">&times;</button></div>
             <form method="POST" id="addMaterialForm" onsubmit="return submitMaterialForm()">
                 <div class="modal-body">
@@ -276,7 +264,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
                             <input type="hidden" name="material_name" id="materialNameHidden">
                             <div class="combo-dropdown" id="materialDropdown"></div>
                         </div>
-                        <small style="color:#888;display:block;margin-top:5px;">Choose from existing materials or type a new name to add it.</small>
+                        <small >Choose from existing materials or type a new name to add it.</small>
                     </div>
                     
                     <div class="form-row">
@@ -306,7 +294,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
     
     <!-- ===== EDIT MATERIAL MODAL (also with searchable dropdown) ===== -->
     <div id="editMaterialModal" class="modal">
-        <div class="modal-content" style="max-width:520px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+        <div class="modal-content modal-content-sm">
             <div class="modal-header"><h2>Edit Material</h2><button class="modal-close" onclick="this.closest('.modal').classList.remove('show')">&times;</button></div>
             <form method="POST" onsubmit="document.getElementById('editMatNameHidden').value = document.getElementById('editMatSearchInput').value; return true;">
                 <div class="modal-body">

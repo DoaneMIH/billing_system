@@ -63,18 +63,6 @@ $current_balance = $balance_row['total_balance'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Ledger - AR NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        @media print {
-            @page { size: letter; margin: 10mm; }
-            body * { visibility: hidden; }
-            .print-ledger, .print-ledger * { visibility: visible; }
-            .print-ledger { position: absolute; left: 0; top: 0; width: 100%; }
-            .no-print { display: none !important; }
-        }
-        @media screen {
-            .print-ledger { display: none; }
-        }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -88,7 +76,7 @@ $current_balance = $balance_row['total_balance'];
                     <h1>Customer Ledger</h1>
                     <p>Payment history and account details</p>
                 </div>
-                <button onclick="window.print()" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px;">
+                <button onclick="window.print()" class="btn btn-primary">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 6 2 18 2 18 9"/>
                         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -101,7 +89,7 @@ $current_balance = $balance_row['total_balance'];
             <div class="widget no-print">
                 <div class="widget-header">
                     <h2>Customer Information</h2>
-                    <button onclick="window.print()" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; font-size: 14px;">
+                    <button onclick="window.print()" class="btn btn-primary">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="6 9 6 2 18 2 18 9"/>
                             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -121,7 +109,7 @@ $current_balance = $balance_row['total_balance'];
                     </div>
                     <div class="form-row mt-1">
                         <div><strong>Monthly Fee:</strong> <?php echo format_currency($customer['monthly_fee']); ?></div>
-                        <div><strong>Current Balance:</strong> <strong style="color: <?php echo $current_balance > 0 ? 'red' : 'green'; ?>;"><?php echo format_currency($current_balance); ?></strong></div>
+                        <div><strong>Current Balance:</strong> <strong class="<?php echo $current_balance > 0 ? 'ledger-balance-positive' : 'ledger-balance-zero'; ?>"><?php echo format_currency($current_balance); ?></strong></div>
                     </div>
                 </div>
             </div>
@@ -184,7 +172,7 @@ $current_balance = $balance_row['total_balance'];
     </div>
     
     <!-- PRINT LEDGER -->
-    <div class="print-ledger" style="font-family: Arial; font-size: 10px; padding: 20px;">
+    <div class="print-ledger">
         <div style="text-align: center; margin-bottom: 15px;">
             <div style="font-size: 13px; font-weight: bold;">NOVA LINK DIGITAL SYSTEMS CORP.</div>
             <div style="font-size: 10px;">F. PALMARES ST., PASSI CTY</div>

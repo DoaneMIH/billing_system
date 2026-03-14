@@ -86,7 +86,12 @@ $packages = $conn->query("SELECT * FROM packages ORDER BY bandwidth_mbps");
     <div class="container">
         <?php include 'includes/sidebar.php'; ?>
         <main class="main-content">
-            <div class="page-header"><h1>System Settings</h1><p>Configure system preferences</p></div>
+            <div class="page-header">
+                <div>
+                <h1>System Settings</h1>
+                <p>Configure system preferences</p>
+                </div>
+            </div>
             
             <?php if (isset($success)): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
             <?php if (isset($error)): ?><div class="alert alert-error"><?php echo $error; ?></div><?php endif; ?>
@@ -100,8 +105,8 @@ $packages = $conn->query("SELECT * FROM packages ORDER BY bandwidth_mbps");
                             <input type="hidden" name="action" value="update_reminder">
                             <div class="form-group">
                                 <label>Announcement / Reminder Text (appears on billing statements):</label>
-                                <textarea name="billing_reminder" rows="6" style="font-family:monospace;"><?php echo htmlspecialchars($reminder); ?></textarea>
-                                <small style="color:#666;">Use \n for line breaks. Text like "TEMPORARY DISCONNECTION" will be highlighted in red.</small>
+                                <textarea name="billing_reminder" rows="6" class="monospace"><?php echo htmlspecialchars($reminder); ?></textarea>
+                                <small>Use \n for line breaks. Text like "TEMPORARY DISCONNECTION" will be highlighted in red.</small>
                             </div>
                             <div class="form-group">
                                 <label>Thank You Tagline (bottom of statement):</label>

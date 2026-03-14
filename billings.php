@@ -56,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
         if (count($errors) > 0) $error = implode(', ', $errors);
     }
     
-    // Add Fees (improved with specific fee types)
     if ($_POST['action'] == 'add_fees' && $_SESSION['role'] == 'admin') {
         $billing_id = intval($_POST['billing_id']);
         $fee_type = sanitize_input($_POST['fee_type']);
@@ -64,20 +63,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
         $fee_description = sanitize_input($_POST['fee_description'] ?? '');
         
         if ($fee_amount > 0) {
-            // Insert into billing_fees table
             $stmt = $conn->prepare("INSERT INTO billing_fees (billing_id, fee_type, fee_description, amount, created_by) VALUES (?,?,?,?,?)");
             $stmt->bind_param("issdi", $billing_id, $fee_type, $fee_description, $fee_amount, $_SESSION['user_id']);
             $stmt->execute();
             $stmt->close();
             
-            // Update billing totals
             $billing = $conn->query("SELECT * FROM billings WHERE billing_id = $billing_id")->fetch_assoc();
             if ($billing) {
                 $new_service = $billing['service_fee'] + $fee_amount;
                 $current_charges = $billing['internet_fee'] + $billing['cable_fee'] + $new_service + $billing['material_fee'];
                 $total = $billing['previous_balance'] + $current_charges;
                 $net = $total - $billing['discount'];
-                
                 $conn->query("UPDATE billings SET service_fee = $new_service, total_amount = $total, net_amount = $net WHERE billing_id = $billing_id");
             }
             
@@ -127,8 +123,10 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
         <?php include 'includes/sidebar.php'; ?>
         <main class="main-content">
             <div class="page-header">
-                <h1>Billing Management</h1>
-                <p>Generate and manage monthly billings</p>
+                <div>
+                    <h1>Billing Management</h1>
+                    <p>Generate and manage monthly billings</p>
+                </div>
             </div>
             
             <?php if (isset($success)): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
@@ -157,7 +155,7 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
                                     <?php endfor; ?>
                                 </select>
                             </div>
-                            <div class="form-group" style="display:flex;align-items:flex-end;">
+                            <div class="form-group form-group-btn">
                                 <button type="submit" class="btn btn-primary">Generate Billings</button>
                             </div>
                         </div>
@@ -180,8 +178,8 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
                     </div>
                 </div>
                 
-                <div style="padding:15px;border-bottom:1px solid var(--border-color);">
-                    <form method="GET" class="filter-group" style="flex-wrap:wrap;gap:8px;">
+                <div class="table-filter-bar">
+                    <form method="GET" class="filter-group">
                         <select name="month">
                             <?php for ($m=1;$m<=12;$m++): ?>
                             <option value="<?php echo $m; ?>" <?php echo $m==$month_filter?'selected':''; ?>><?php echo get_month_name($m); ?></option>
@@ -239,7 +237,7 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
                                 <?php $sc = $row['status']=='paid'?'success':($row['status']=='partial'?'warning':'danger'); ?>
                                 <span class="badge badge-<?php echo $sc; ?>"><?php echo ucfirst($row['status']); ?></span>
                             </td>
-                            <td style="white-space:nowrap;">
+                            <td class="col-nowrap">
                                 <a href="print_billing_statement.php?id=<?php echo $row['customer_id']; ?>&month=<?php echo $row['billing_month']; ?>&year=<?php echo $row['billing_year']; ?>" target="_blank" class="btn btn-sm btn-primary">Print SOA</a>
                                 <?php if ($_SESSION['role'] == 'admin'): ?>
                                 <button onclick="openAddFeesModal(<?php echo $row['billing_id']; ?>, '<?php echo htmlspecialchars($row['subscriber_name']); ?>', '<?php echo get_month_name($row['billing_month']).' '.$row['billing_year']; ?>')" class="btn btn-sm btn-secondary">Add Fees</button>
@@ -257,7 +255,7 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
     
     <?php if ($_SESSION['role'] == 'admin'): ?>
     <div id="addFeesModal" class="modal">
-        <div class="modal-content" style="max-width:550px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+        <div class="modal-content modal-content-sm">
             <div class="modal-header"><h2>Add Fee</h2><button class="modal-close" onclick="closeModal('addFeesModal')">&times;</button></div>
             <form method="POST"><div class="modal-body">
                 <input type="hidden" name="action" value="add_fees">

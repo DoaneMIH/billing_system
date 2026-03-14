@@ -90,12 +90,12 @@ $total_customers = 0;
                 // Color coding based on days overdue
                 $row_class = '';
                 if ($days_overdue > 60) {
-                    $row_class = 'style="background: #f8d7da;"'; // Red
+                    $row_class = 'table-row-critical'; // Red
                 } elseif ($days_overdue > 30) {
-                    $row_class = 'style="background: #fff3cd;"'; // Yellow
+                    $row_class = 'table-row-overdue'; // Yellow
                 }
             ?>
-            <tr <?php echo $row_class; ?>>
+            <tr class="<?php echo $row_class; ?>">
                 <td><?php echo htmlspecialchars($row['account_number']); ?></td>
                 <td><?php echo htmlspecialchars($row['subscriber_name']); ?></td>
                 <td><?php echo htmlspecialchars($row['address']); ?></td>
@@ -123,7 +123,7 @@ $total_customers = 0;
                 </td>
             </tr>
             <?php endwhile; ?>
-            <tr style="background: var(--primary-color); color: white; font-weight: bold; font-size: 15px;">
+            <tr class="table-row-total-primary">
                 <td colspan="8" class="text-right">TOTAL UNPAID:</td>
                 <td class="text-right"><?php echo format_currency($total_unpaid); ?></td>
                 <td></td>
@@ -136,9 +136,9 @@ $total_customers = 0;
     </tbody>
 </table>
 
-<div style="margin-top: 30px; padding: 15px; background: var(--light-gray); border-radius: 5px;">
-    <h3 style="color: var(--primary-color); margin-bottom: 10px;">Summary</h3>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+<div class="report-summary-box">
+    <h3>Summary</h3>
+    <div class="report-summary-grid-3">
         <div>
             <strong>Total Customers with Unpaid Bills:</strong> <?php echo number_format($total_customers); ?>
         </div>
@@ -152,17 +152,17 @@ $total_customers = 0;
     </div>
 </div>
 
-<div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
-    <h4 style="margin-bottom: 10px;">⚠️ Color Coding Legend:</h4>
-    <ul style="margin-left: 20px; line-height: 2;">
+<div class="report-panel-warning">
+    <h4>⚠️ Color Coding Legend:</h4>
+    <ul>
         <li><strong>Red Background:</strong> 60+ days overdue - URGENT ACTION REQUIRED</li>
         <li><strong>Yellow Background:</strong> 30-60 days overdue - Follow-up needed</li>
         <li><strong>White Background:</strong> Less than 30 days overdue - Monitor</li>
     </ul>
 </div>
 
-<div style="margin-top: 40px; padding: 20px; border-top: 2px solid var(--primary-color);">
-    <p style="text-align: center; color: var(--dark-gray); font-size: 12px;">
+<div class="report-footer">
+    <p>
         This report shows all customers with outstanding unpaid balances. Immediate action is recommended for accounts highlighted in red.
     </p>
 </div>

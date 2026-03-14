@@ -22,60 +22,6 @@ $areas = $conn->query("SELECT * FROM areas ORDER BY area_name");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports - AR NOVALINK Billing System</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            body {
-                background: white;
-            }
-            .report-container {
-                box-shadow: none;
-                padding: 0;
-            }
-            .main-header {
-                display: none !important;
-            }
-            .container {
-                display: block !important;
-            }
-            .sidebar {
-                display: none !important;
-            }
-            .main-content {
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-        }
-        
-        .report-container {
-            background: white;
-            padding: 30px;
-            margin: 20px 0;
-        }
-        
-        .report-header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid var(--primary-color);
-            padding-bottom: 20px;
-        }
-        
-        .report-header h1 {
-            color: var(--primary-color);
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
-        .report-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -85,8 +31,10 @@ $areas = $conn->query("SELECT * FROM areas ORDER BY area_name");
         
         <main class="main-content">
             <div class="page-header no-print">
+                <div>
                 <h1>Reports & Analytics</h1>
                 <p>Generate comprehensive reports with filters</p>
+                </div>
             </div>
             
             <!-- Report Type Selection -->
@@ -156,7 +104,7 @@ $areas = $conn->query("SELECT * FROM areas ORDER BY area_name");
                                 </select>
                             </div>
                             
-                            <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px;">
+                            <div class="form-group form-group-btn gap-10">
                                 <button type="submit" class="btn btn-primary">Generate Report</button>
                                 <button type="button" onclick="window.print()" class="btn btn-secondary">Print / PDF</button>
                             </div>
