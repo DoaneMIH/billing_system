@@ -1,9 +1,8 @@
 <header class="main-header">
     <div class="header-content">
         <div class="header-logo">
-            <img src="images/logo.jpg" alt="NovaLink Logo" class="logo">
-            <h1>AR NOVALINK Billing System</h1>
-            </div>
+            <img src="images/nav.png" alt="AR Novalink Logo">
+        </div>
         <div class="header-user">
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($_SESSION['full_name']); ?></div>

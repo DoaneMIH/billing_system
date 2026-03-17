@@ -36,6 +36,7 @@ $conn->close();
     <?php include 'includes/header.php'; ?>
     <div class="container">
         <?php include 'includes/sidebar.php'; ?>
+        <!-- <img src="images/headerlogo.png" class="header-label" alt=""> -->
         <main class="main-content">
             <div class="page-header">
                 <div>

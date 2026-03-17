@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
             $due_date = "$year-$month-$last_day";
             
             $stmt = $conn->prepare("INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, material_fee, previous_balance, total_amount, discount, net_amount, due_date, auto_generated) VALUES (?,?,?,?,0,0,0,?,?,0,?,?,1)");
-            $stmt->bind_param("iiiddddds", $customer_id, $month, $year, $internet_fee, $previous_balance, $total_amount, $net_amount, $due_date);
+            $stmt->bind_param("iiidddds", $customer_id, $month, $year, $internet_fee, $previous_balance, $total_amount, $net_amount, $due_date);
             if ($stmt->execute()) { $generated++; } else { $errors[] = $stmt->error; }
             $stmt->close();
         }
@@ -131,38 +131,6 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
             
             <?php if (isset($success)): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
             <?php if (isset($error)): ?><div class="alert alert-error"><?php echo $error; ?></div><?php endif; ?>
-            
-            <?php if ($_SESSION['role'] == 'admin'): ?>
-            <div class="widget mb-3">
-                <div class="widget-header"><h2>Generate Monthly Billing</h2></div>
-                <div class="widget-content">
-                    <form method="POST" onsubmit="return confirm('Generate billing for all eligible customers?');">
-                        <input type="hidden" name="action" value="generate">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Month</label>
-                                <select name="month" required>
-                                    <?php for ($m=1;$m<=12;$m++): ?>
-                                    <option value="<?php echo $m; ?>" <?php echo $m==date('n')?'selected':''; ?>><?php echo get_month_name($m); ?></option>
-                                    <?php endfor; ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Year</label>
-                                <select name="year" required>
-                                    <?php for ($y=date('Y');$y<=date('Y')+1;$y++): ?>
-                                    <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
-                                    <?php endfor; ?>
-                                </select>
-                            </div>
-                            <div class="form-group form-group-btn">
-                                <button type="submit" class="btn btn-primary">Generate Billings</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <?php endif; ?>
             
             <div class="table-container">
                 <div class="table-header">

@@ -178,7 +178,7 @@ $daily_count = $conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_
                             <td><?php echo ucfirst($row['payment_method']); ?></td>
                             <td>
                                 <a href="print_invoice.php?id=<?php echo $row['payment_id']; ?>" target="_blank" class="btn btn-sm btn-primary">Invoice</a>
-                                <a href="print_receipt.php?id=<?php echo $row['payment_id']; ?>" target="_blank" class="btn btn-sm btn-secondary">Receipt</a>
+                                <!-- <a href="print_receipt.php?id=<?php echo $row['payment_id']; ?>" target="_blank" class="btn btn-sm btn-secondary">Receipt</a> -->
                             </td>
                         </tr>
                         <?php endwhile; else: ?>
