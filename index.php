@@ -97,5 +97,6 @@ si.addEventListener('input',function(){clearTimeout(st);var q=this.value.trim();
 si.addEventListener('focus',function(){if(this.value.trim().length>0)sr.style.display='block';});
 document.addEventListener('click',function(e){if(!e.target.closest('.search-container'))sr.style.display='none';});
 </script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>

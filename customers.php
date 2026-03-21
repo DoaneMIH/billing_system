@@ -293,6 +293,7 @@ function saveCanvas() { if (canvas) document.getElementById('sketch_data').value
 /* Load subscribers on page load */
 loadCustomers();
 </script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

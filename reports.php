@@ -248,6 +248,7 @@ $areas_list = $conn->query("SELECT * FROM areas ORDER BY area_name");
     </main>
 </div>
 <script src="js/script.js"></script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

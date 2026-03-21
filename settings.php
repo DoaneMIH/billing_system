@@ -155,6 +155,7 @@ $packages = $conn->query("SELECT * FROM packages ORDER BY bandwidth_mbps");
         </main>
     </div>
     <script src="js/script.js"></script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

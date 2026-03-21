@@ -176,6 +176,7 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
             }, 300);
         });
     </script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

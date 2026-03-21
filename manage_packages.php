@@ -507,6 +507,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
                 .catch(() => {});
         }
     </script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

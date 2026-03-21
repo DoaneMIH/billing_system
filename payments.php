@@ -166,6 +166,7 @@ $daily_count=$conn->query("SELECT COUNT(*) as cnt FROM payments WHERE payment_da
 </div>
 <script src="js/script.js"></script>
 <script src="js/payment.js"></script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

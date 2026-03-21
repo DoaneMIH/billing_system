@@ -130,6 +130,7 @@ $total_unpaid = 0; $total_customers = 0;
         </main>
     </div>
     <script src="js/script.js"></script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

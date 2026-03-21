@@ -330,6 +330,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
             }
         }
     </script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

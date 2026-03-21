@@ -266,6 +266,7 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
             document.getElementById('addFeesModal').classList.add('show');
         }
     </script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>

@@ -1383,3 +1383,21 @@ table tbody tr:hover { background: var(--light-gray); }
 .table-filter-bar { padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
 .table-row-overdue { background: #fff3cd; }
 .table-row-total { background: var(--light-gray); font-weight: 700; }
+/* ── Footer ── */
+.main-footer {
+    background: var(--primary-color);
+    color: rgba(255,255,255,.85);
+    text-align: center;
+    padding: 14px 20px;
+    font-size: 12px;
+    margin-top: auto;
+}
+.main-footer p { margin: 0; }
+.main-footer strong { color: #fff; }
+.footer-group {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}

@@ -175,6 +175,7 @@ $total_billed = 0; $total_paid = 0; $total_balance = 0;
         </table>
     </div>
     <script src="js/script.js"></script>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>
 <?php $conn->close(); ?>
