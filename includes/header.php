@@ -19,3 +19,4 @@
         </div>
     </div>
 </header>
+<script src="js/realtime.js" defer></script>

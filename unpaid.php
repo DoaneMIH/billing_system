@@ -39,25 +39,30 @@ $total_unpaid = 0; $total_customers = 0;
         <main class="main-content">
             <div class="page-header no-print">
                 <div>
-                <h1>Unpaid Subscriptions</h1>
-                <p>View subscribers with outstanding balance</p>
+                    <h1>Unpaid Subscriptions</h1>
+                    <p>View subscribers with outstanding balance</p>
                 </div>
             </div>
             
-            <!-- Print-only header -->
-            <div class="print-header text-center mb-2">
+            <!-- Print header -->
+            <div class="print-header">
                 <img src="images/headerlogo.png" alt="NovaLink" class="print-header-logo">
                 <h2>UNPAID SUBSCRIPTIONS REPORT</h2>
+                <?php if ($month_filter > 0): ?>
+                <h3><?php echo get_month_name($month_filter) . ' ' . $year_filter; ?></h3>
+                <?php else: ?>
+                <h3>Year <?php echo $year_filter; ?></h3>
+                <?php endif; ?>
                 <p class="text-muted">Generated: <?php echo date('F d, Y h:i A'); ?></p>
             </div>
             
             <div class="table-container">
                 <div class="table-header no-print">
-                    <h2>Filter Unpaid Bills</h2>
+                    <h2>Unpaid Bills</h2>
                     <button onclick="window.print()" class="btn btn-primary">🖨️ Print Report</button>
                 </div>
                 
-                <div class="table-filter-bar filter-section no-print">
+                <div class="table-filter-bar no-print">
                     <form method="GET" class="filter-group">
                         <select name="area"><option value="0">All Areas</option>
                             <?php while ($area = $areas->fetch_assoc()): ?>
@@ -81,30 +86,43 @@ $total_unpaid = 0; $total_customers = 0;
                 
                 <table>
                     <thead><tr>
-                        <th>Account #</th><th>Subscriber Name</th><th>Address</th><th>Area</th><th>Contact</th><th>Billing Period</th><th>Amount Due</th><th>Due Date</th><th>Days Overdue</th><th class="actions-col no-print">Actions</th>
+                        <th>Account #</th>
+                        <th>Subscriber Name</th>
+                        <th>Area</th>
+                        <th>Billing Period</th>
+                        <th>Amount Due</th>
+                        <th>Due Date</th>
+                        <th>Days Overdue</th>
+                        <th class="actions-col no-print">Actions</th>
                     </tr></thead>
                     <tbody>
                         <?php if ($result->num_rows > 0): while ($row = $result->fetch_assoc()): $total_unpaid += $row['net_amount']; $total_customers++; ?>
                         <tr class="<?php echo $row['days_overdue']>30?'table-row-overdue':''; ?>">
                             <td><?php echo htmlspecialchars($row['account_number']); ?></td>
                             <td><?php echo htmlspecialchars($row['subscriber_name']); ?></td>
-                            <td><?php echo htmlspecialchars($row['address']); ?></td>
                             <td><?php echo htmlspecialchars($row['area_name']??'N/A'); ?></td>
-                            <td><?php echo htmlspecialchars($row['tel_no']??'N/A'); ?></td>
                             <td><?php echo get_month_name($row['billing_month']).' '.$row['billing_year']; ?></td>
                             <td><?php echo format_currency($row['net_amount']); ?></td>
                             <td><?php echo $row['due_date']?date('M d, Y',strtotime($row['due_date'])):'N/A'; ?></td>
-                            <td><?php echo $row['days_overdue']>0?'<span class="badge badge-danger">'.$row['days_overdue'].' days</span>':'<span class="badge badge-warning">Due soon</span>'; ?></td>
-                            <td class="actions-col no-print"><a href="customer_ledger.php?id=<?php echo $row['customer_id']; ?>" class="btn btn-sm btn-primary">Ledger</a></td>
+                            <td>
+                                <?php if ($row['days_overdue'] > 0): ?>
+                                    <span class="badge badge-danger"><?php echo $row['days_overdue']; ?> days</span>
+                                <?php else: ?>
+                                    <span class="badge badge-warning">Due soon</span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="actions-col no-print">
+                                <a href="customer_ledger.php?id=<?php echo $row['customer_id']; ?>" class="btn btn-sm btn-primary">Ledger</a>
+                            </td>
                         </tr>
                         <?php endwhile; ?>
                         <tr class="table-row-total">
-                            <td colspan="6" class="text-right">TOTAL UNPAID (<?php echo $total_customers; ?> subscribers):</td>
+                            <td colspan="4" class="text-right">TOTAL UNPAID (<?php echo $total_customers; ?> subscribers):</td>
                             <td><?php echo format_currency($total_unpaid); ?></td>
                             <td colspan="3"></td>
                         </tr>
                         <?php else: ?>
-                        <tr><td colspan="10" class="text-center">No unpaid bills found</td></tr>
+                        <tr><td colspan="8" class="text-center">No unpaid bills found</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

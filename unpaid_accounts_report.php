@@ -1,5 +1,8 @@
 <?php
 // Unpaid Accounts Report
+if (!isset($area_filter)) $area_filter = 0;
+if (!isset($month_filter)) $month_filter = date("n");
+if (!isset($year_filter)) $year_filter = date("Y");
 $sql = "SELECT 
         c.customer_id,
         c.account_number,

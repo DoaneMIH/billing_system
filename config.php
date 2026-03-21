@@ -1,6 +1,6 @@
 <?php
 // Database Configuration
-define('DB_HOST', 'localhost');
+define('DB_HOST', '192.168.254.116');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'ar_novalink_billing');

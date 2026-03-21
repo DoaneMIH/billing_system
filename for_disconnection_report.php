@@ -1,5 +1,8 @@
 <?php
 // Customers for Disconnection Report
+if (!isset($area_filter)) $area_filter = 0;
+if (!isset($month_filter)) $month_filter = date("n");
+if (!isset($year_filter)) $year_filter = date("Y");
 // Criteria: 60+ days overdue OR status = 'hold_disconnection' with 45+ days overdue
 
 $sql = "SELECT 

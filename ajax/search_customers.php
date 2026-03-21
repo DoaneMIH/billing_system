@@ -8,16 +8,17 @@ $area_filter = isset($_GET['area']) ? intval($_GET['area']) : 0;
 $status_filter = isset($_GET['status']) ? sanitize_input($_GET['status']) : '';
 
 $conn = getDBConnection();
-$sql = "SELECT c.customer_id, c.account_number, c.subscriber_name, c.address, c.tel_no, c.monthly_fee, c.status, a.area_name, p.package_name
+$sql = "SELECT c.customer_id, c.account_number, c.subscriber_name, c.first_name, c.middle_name, c.last_name,
+        c.address, c.tel_no, c.monthly_fee, c.status, a.area_name, p.package_name
         FROM customers c LEFT JOIN areas a ON c.area_id = a.area_id LEFT JOIN packages p ON c.package_id = p.package_id WHERE 1=1";
 
 if (strlen($query) > 0) {
     $s = "%" . $conn->real_escape_string($query) . "%";
-    $sql .= " AND (c.account_number LIKE '$s' OR c.subscriber_name LIKE '$s' OR c.address LIKE '$s' OR c.tel_no LIKE '$s' OR c.account_name LIKE '$s')";
+    $sql .= " AND (c.account_number LIKE '$s' OR c.subscriber_name LIKE '$s' OR c.first_name LIKE '$s' OR c.last_name LIKE '$s' OR c.address LIKE '$s' OR c.tel_no LIKE '$s')";
 }
 if ($area_filter > 0) $sql .= " AND c.area_id = $area_filter";
 if ($status_filter !== '') $sql .= " AND c.status = '" . $conn->real_escape_string($status_filter) . "'";
-$sql .= " ORDER BY c.subscriber_name LIMIT 100";
+$sql .= " ORDER BY c.customer_id DESC LIMIT 100";
 
 $result = $conn->query($sql);
 $customers = [];
