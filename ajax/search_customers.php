@@ -9,7 +9,8 @@ $status_filter = isset($_GET['status']) ? sanitize_input($_GET['status']) : '';
 
 $conn = getDBConnection();
 $sql = "SELECT c.customer_id, c.account_number, c.subscriber_name, c.first_name, c.middle_name, c.last_name,
-        c.address, c.tel_no, c.monthly_fee, c.status, a.area_name, p.package_name
+        c.address, c.tel_no, c.monthly_fee, c.status, c.area_id, c.package_id,
+        c.installation_date, a.area_name, p.package_name
         FROM customers c LEFT JOIN areas a ON c.area_id = a.area_id LEFT JOIN packages p ON c.package_id = p.package_id WHERE 1=1";
 
 if (strlen($query) > 0) {

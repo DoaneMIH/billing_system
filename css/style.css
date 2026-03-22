@@ -1401,3 +1401,129 @@ table tbody tr:hover { background: var(--light-gray); }
     letter-spacing: 1px;
     margin-top: 2px;
 }
+
+/* ============================================================
+   DELETE SUBSCRIBER — Button & Modal Styles
+   ============================================================ */
+
+/* Delete button — distinct from danger (red) to signal irreversibility */
+.btn-delete {
+    background: #7b1fa2;
+    color: #ffffff;
+    border: none;
+}
+
+.btn-delete:hover {
+    background: #6a1b9a;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(123, 31, 162, 0.35);
+}
+
+/* Modal header danger variant */
+.modal-header-danger {
+    background: #c62828;
+}
+
+/* Warning info box inside the modal */
+.delete-warning-box {
+    background: #fff3e0;
+    border-left: 4px solid #e65100;
+    border-radius: 0 6px 6px 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+
+.delete-warning-title {
+    font-size: 14px;
+    color: #bf360c;
+    margin: 0 0 8px;
+}
+
+.delete-warning-sub {
+    font-size: 13px;
+    color: #4e342e;
+    margin: 0 0 6px;
+}
+
+.delete-warning-list {
+    margin: 0 0 0 18px;
+    padding: 0;
+    font-size: 13px;
+    color: #4e342e;
+    line-height: 1.8;
+}
+
+/* Subscriber info panel */
+.delete-target-box {
+    background: var(--light-gray);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.delete-target-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.delete-target-label {
+    color: var(--dark-gray);
+    min-width: 90px;
+}
+
+.delete-target-value {
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+/* Make the modal footer form fill its row */
+#deleteSubForm {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/* ============================================================
+   EDIT SUBSCRIBER — Button & Modal Styles
+   ============================================================ */
+
+/* Edit button — teal/info tone to signal safe action */
+.btn-edit {
+    background: #0277bd;
+    color: #ffffff;
+    border: none;
+}
+
+.btn-edit:hover {
+    background: #01579b;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(2, 119, 189, 0.35);
+}
+
+/* Edit modal — wider to match Add Subscriber layout */
+.modal-edit {
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Edit modal header — blue accent */
+.modal-header-edit {
+    background: #01579b;
+}
+
+/* ============================================================
+   LEDGER — header right-side cluster (badge + admin buttons)
+   ============================================================ */
+.ledger-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}

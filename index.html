@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR NOVALINK Billing System — Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #00e5a0;
+    --accent2: #00b4d8;
+    --accent3: #f5a623;
+    --accent4: #e05c5c;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-faint: #484f58;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── STICKY NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 32px;
+    height: 56px;
+    overflow-x: auto;
+  }
+  nav .brand {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    white-space: nowrap;
+    margin-right: 16px;
+    letter-spacing: 1px;
+  }
+  nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    white-space: nowrap;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  nav a:hover { color: var(--text); background: var(--surface2); }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #0a1f2e 60%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,229,160,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    border: 1px solid rgba(0,229,160,0.3);
+    background: rgba(0,229,160,0.06);
+    padding: 4px 14px;
+    border-radius: 100px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(24px, 4vw, 46px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 auto 32px;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+  .tag.green { color: var(--accent); border-color: rgba(0,229,160,0.25); background: rgba(0,229,160,0.05); }
+  .tag.blue { color: var(--accent2); border-color: rgba(0,180,216,0.25); background: rgba(0,180,216,0.05); }
+  .tag.orange { color: var(--accent3); border-color: rgba(245,166,35,0.25); background: rgba(245,166,35,0.05); }
+
+  /* ── LAYOUT ── */
+  .wrapper {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-top: 72px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(0,229,160,0.07);
+    border: 1px solid rgba(0,229,160,0.2);
+    padding: 3px 10px;
+    border-radius: 5px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .section h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .section p {
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  /* ── TECH STACK TABLE ── */
+  .tech-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  .tech-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 8px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .tech-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .tech-table tr:last-child td { border-bottom: none; }
+  .tech-table tbody tr { background: var(--surface); }
+  .tech-table tbody tr:nth-child(even) { background: var(--surface2); }
+  .tech-table td:first-child { color: var(--accent); font-weight: 600; font-size: 13px; }
+  .tech-table td code {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    background: rgba(0,229,160,0.07);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ── FILE TREE ── */
+  .file-tree {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-top: 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+    overflow-x: auto;
+  }
+  .file-tree .folder { color: var(--accent2); }
+  .file-tree .file { color: var(--text-muted); }
+  .file-tree .file-note { color: var(--text-faint); font-size: 11px; }
+  .file-tree .highlight-file { color: var(--accent); }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+    margin: 24px 0;
+  }
+  .flow-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .flow-step .step-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--accent);
+    color: #000;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .flow-arrow {
+    color: var(--text-faint);
+    font-size: 18px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+
+  /* ── ROLE GRID ── */
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .role-card {
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid;
+  }
+  .role-card.admin { border-color: rgba(0,229,160,0.3); background: rgba(0,229,160,0.04); }
+  .role-card.accounting { border-color: rgba(0,180,216,0.3); background: rgba(0,180,216,0.04); }
+  .role-card.cashier { border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.04); }
+  .role-card .role-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .role-card.admin .role-name { color: var(--accent); }
+  .role-card.accounting .role-name { color: var(--accent2); }
+  .role-card.cashier .role-name { color: var(--accent3); }
+  .role-card ul { list-style: none; padding: 0; }
+  .role-card li {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .role-card li::before { content: '✓'; font-size: 12px; }
+  .role-card.admin li::before { color: var(--accent); }
+  .role-card.accounting li::before { color: var(--accent2); }
+  .role-card.cashier li::before { color: var(--accent3); }
+
+  /* ── BILLING MATH ── */
+  .formula-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin: 20px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+  }
+  .formula-box .formula-title {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .formula-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .formula-row:last-child { border-bottom: none; }
+  .formula-row .label { color: var(--text-muted); width: 180px; flex-shrink: 0; }
+  .formula-row .val { color: var(--text); }
+  .formula-total {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 2px solid var(--accent);
+    font-size: 15px;
+    color: var(--accent);
+  }
+
+  /* ── DB TABLES ── */
+  .db-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .db-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .db-card-header {
+    background: var(--surface2);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .db-card-header .table-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent2);
+    font-weight: 700;
+  }
+  .db-card-header .table-badge {
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+  .db-field {
+    display: flex;
+    align-items: center;
+    padding: 7px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    gap: 10px;
+  }
+  .db-field:last-child { border-bottom: none; }
+  .db-field .col-name {
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+    width: 140px;
+    flex-shrink: 0;
+  }
+  .db-field .col-type {
+    color: var(--accent3);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .db-field .col-desc { color: var(--text-muted); }
+  .pk-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    background: rgba(0,229,160,0.12);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .fk-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    background: rgba(0,180,216,0.12);
+    color: var(--accent2);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── REALTIME BOX ── */
+  .realtime-diagram {
+    background: var(--surface);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .realtime-diagram::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .rt-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .rt-row:last-child { border-bottom: none; }
+  .rt-label {
+    font-family: 'Space Mono', monospace;
+    color: var(--accent);
+    width: 160px;
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+  .rt-val { color: var(--text-muted); }
+
+  /* ── WORKFLOW ACCORDION ── */
+  .workflow-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .workflow-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .workflow-header:hover { background: var(--surface2); }
+  .workflow-header .wf-icon { font-size: 22px; }
+  .workflow-header .wf-title { font-weight: 600; font-size: 15px; flex: 1; }
+  .workflow-header .wf-arrow {
+    color: var(--text-muted);
+    transition: transform 0.25s;
+    font-size: 14px;
+  }
+  .workflow-header.open .wf-arrow { transform: rotate(90deg); }
+  .workflow-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .workflow-body.open { display: block; }
+  .wf-steps {
+    list-style: none;
+    padding: 16px 0 0;
+    counter-reset: wf;
+  }
+  .wf-steps li {
+    display: flex;
+    gap: 14px;
+    padding: 8px 0;
+    counter-increment: wf;
+    align-items: flex-start;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  .wf-steps li::before {
+    content: counter(wf);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--accent);
+    color: #000;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── STATUS BADGES ── */
+  .status-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .status-pill.active { color: #00e5a0; border-color: rgba(0,229,160,0.3); background: rgba(0,229,160,0.08); }
+  .status-pill.pending { color: #f5a623; border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.08); }
+  .status-pill.hold { color: #e09c00; border-color: rgba(224,156,0,0.3); background: rgba(224,156,0,0.08); }
+  .status-pill.disconnected { color: #e05c5c; border-color: rgba(224,92,92,0.3); background: rgba(224,92,92,0.08); }
+  .status-pill.reconnected { color: #00b4d8; border-color: rgba(0,180,216,0.3); background: rgba(0,180,216,0.08); }
+  .status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+  /* ── MISSING FEATURES TABLE ── */
+  .missing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  .missing-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .missing-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text-muted);
+  }
+  .missing-table td:first-child { font-weight: 600; color: var(--text); }
+  .missing-table tbody tr { background: var(--surface); }
+  .missing-table tbody tr:nth-child(even) { background: var(--surface2); }
+  .badge-missing {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .badge-missing.partial { background: rgba(245,166,35,0.15); color: var(--accent3); }
+  .badge-missing.no { background: rgba(224,92,92,0.12); color: var(--accent4); }
+
+  /* ── SETUP STEPS ── */
+  .setup-steps {
+    counter-reset: setup;
+    margin: 20px 0;
+  }
+  .setup-step {
+    display: flex;
+    gap: 18px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    counter-increment: setup;
+    align-items: flex-start;
+  }
+  .setup-step:last-child { border-bottom: none; }
+  .setup-step::before {
+    content: counter(setup);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    background: var(--accent);
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .setup-step .step-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .setup-step .step-content p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    background: rgba(255,255,255,0.05);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+  .code-block {
+    background: #0a0e14;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #8b9eb5;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+  .code-block .kw { color: #c792ea; }
+  .code-block .fn { color: #82aaff; }
+  .code-block .str { color: #c3e88d; }
+  .code-block .cm { color: #546e7a; }
+  .code-block .num { color: #f78c6c; }
+
+  /* ── SECURITY TABLE ── */
+  .sec-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+  .sec-table th {
+    font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-muted);
+    text-align: left; padding: 8px 12px; background: var(--surface2);
+    border-bottom: 1px solid var(--border); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .sec-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .sec-table td:first-child { color: var(--text); font-weight: 600; }
+  .sec-table tbody tr { background: var(--surface); }
+  .sec-table tbody tr:nth-child(even) { background: var(--surface2); }
+  .ok { color: var(--accent); font-size: 12px; }
+  .warn { color: var(--accent3); font-size: 12px; }
+  .bad { color: var(--accent4); font-size: 12px; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    display: flex;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: var(--radius);
+    margin: 20px 0;
+    font-size: 13px;
+    align-items: flex-start;
+  }
+  .callout.info { background: rgba(0,180,216,0.07); border: 1px solid rgba(0,180,216,0.25); }
+  .callout.warn { background: rgba(245,166,35,0.07); border: 1px solid rgba(245,166,35,0.25); }
+  .callout.danger { background: rgba(224,92,92,0.07); border: 1px solid rgba(224,92,92,0.25); }
+  .callout.success { background: rgba(0,229,160,0.06); border: 1px solid rgba(0,229,160,0.2); }
+  .callout .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout p { color: var(--text-muted); margin: 0; }
+  .callout p strong { color: var(--text); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 60px 0 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 24px;
+    font-size: 12px;
+    color: var(--text-faint);
+    font-family: 'Space Mono', monospace;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── ER DIAGRAM ── */
+  .er-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin: 20px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .er-diagram svg { max-width: 100%; }
+
+  @media (max-width: 640px) {
+    .hero { padding: 48px 20px 40px; }
+    .wrapper { padding: 0 16px 60px; }
+    nav { padding: 0 16px; }
+    .flow { flex-direction: column; align-items: flex-start; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="brand">📡 AR NOVALINK</div>
+  <a href="#overview">Overview</a>
+  <a href="#tech">Tech Stack</a>
+  <a href="#structure">Files</a>
+  <a href="#roles">Roles</a>
+  <a href="#modules">Modules</a>
+  <a href="#billing-logic">Billing Logic</a>
+  <a href="#realtime">Realtime</a>
+  <a href="#database">Database</a>
+  <a href="#workflows">Workflows</a>
+  <a href="#setup">Setup</a>
+  <a href="#security">Security</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#swot">SWOT</a>
+  <a href="#glossary">Glossary</a>
+  <a href="#panel-qa">Panel Q&amp;A</a>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="badge">SYSTEM DOCUMENTATION v2.0</div>
+  <h1>AR NOVALINK<br><span>Billing System</span></h1>
+  <p>A complete web-based ISP billing management system for NOVA LINK DIGITAL SYSTEMS CORP. — Passi City, Iloilo.</p>
+  <div class="hero-tags">
+    <span class="tag green">PHP 7.4+</span>
+    <span class="tag blue">MySQL / MariaDB</span>
+    <span class="tag orange">Apache / XAMPP</span>
+    <span class="tag">HTML5 + CSS3</span>
+    <span class="tag">Vanilla JS</span>
+    <span class="tag green">Asia/Manila Timezone</span>
+    <span class="tag blue">Role-Based Access</span>
+    <span class="tag orange">Real-Time AJAX Polling</span>
+  </div>
+</div>
+
+<!-- ── WRAPPER ── -->
+<div class="wrapper">
+
+  <!-- ───────────────── 1. OVERVIEW ───────────────── -->
+  <div class="section" id="overview">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>System Overview</h2>
+    </div>
+    <p>The AR NOVALINK Billing System is a web-based application that manages everything an Internet Service Provider (ISP) needs to operate: subscriber records, monthly bill generation, payment collection, and financial reporting.</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">👥</div>
+        <h3>Customer Management</h3>
+        <p>Create, update, and track subscriber records. Manage connection status from pending installation through disconnection.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h3>Billing Generation</h3>
+        <p>Auto-generate monthly bills for all active subscribers with automatic balance carryover from previous months.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💳</div>
+        <h3>Payment Collection</h3>
+        <p>Record payments from cashiers, generate official receipts (OR), and mark billing records as paid or partial.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>Financial Reports</h3>
+        <p>Monthly billing, sales, unpaid accounts, disconnection risk, and last-payment-date reports. All printable.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h3>Role-Based Access</h3>
+        <p>Three roles control what each user can see and do: Admin, Accounting, and Cashier.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Real-Time Updates</h3>
+        <p>AJAX polling every 5 seconds auto-refreshes dashboards and key pages when data changes, without full reload.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────── 2. TECH STACK ───────────────── -->
+  <div class="section" id="tech">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Technology Stack</h2>
+    </div>
+    <p>All technologies are server-side friendly for local XAMPP deployment. No Node.js, no build step, no framework.</p>
+
+    <table class="tech-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Technology</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Backend</td>
+          <td><code>PHP 7.4+</code></td>
+          <td>Procedural PHP — all page logic, DB queries, session management, helpers</td>
+        </tr>
+        <tr>
+          <td>Database</td>
+          <td><code>MySQL 5.7+</code> / MariaDB</td>
+          <td>Stores all subscribers, billings, payments, users, logs</td>
+        </tr>
+        <tr>
+          <td>Frontend</td>
+          <td>HTML5 + CSS3 + Vanilla JS</td>
+          <td>UI rendering, AJAX calls, print-ready pages</td>
+        </tr>
+        <tr>
+          <td>Web Server</td>
+          <td>Apache (XAMPP recommended)</td>
+          <td>Hosts the PHP application locally on port 80</td>
+        </tr>
+        <tr>
+          <td>Timezone</td>
+          <td><code>Asia/Manila</code> (PST)</td>
+          <td>All dates and timestamps follow Philippine Standard Time</td>
+        </tr>
+        <tr>
+          <td>Charset</td>
+          <td><code>utf8mb4_unicode_ci</code></td>
+          <td>Full Unicode support including Filipino characters</td>
+        </tr>
+        <tr>
+          <td>Currency</td>
+          <td>Philippine Peso (₱)</td>
+          <td>All monetary values formatted as ₱X,XXX.XX via <code>format_currency()</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ───────────────── 3. FILE STRUCTURE ───────────────── -->
+  <div class="section" id="structure">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Project File Structure</h2>
+    </div>
+    <p>57 files total. Here's the full breakdown with notes on each important file:</p>
+
+    <div class="file-tree">
+<span class="folder">billing_system/</span><br>
+├── <span class="highlight-file">config.php</span>         <span class="file-note">── DB connection, sessions, helper functions (START HERE)</span><br>
+├── <span class="highlight-file">login.php</span>          <span class="file-note">── Entry point: username + password form</span><br>
+├── logout.php            <span class="file-note">── Destroys session, redirects to login</span><br>
+├── <span class="highlight-file">index.php</span>          <span class="file-note">── Dashboard: stat cards + quick actions</span><br>
+│<br>
+├── <span class="file">customers.php</span>      <span class="file-note">── Subscriber list, Add/Edit/Disconnect/Reconnect</span><br>
+├── <span class="file">customer_ledger.php</span><span class="file-note">── Full billing+payment history per subscriber</span><br>
+├── <span class="file">billings.php</span>       <span class="file-note">── Generate monthly bills, view billing records</span><br>
+├── <span class="file">payments.php</span>       <span class="file-note">── Record payments, search customers</span><br>
+├── <span class="file">unpaid.php</span>         <span class="file-note">── All outstanding balances, color-coded urgency</span><br>
+├── <span class="file">reports.php</span>        <span class="file-note">── Hub page linking to 5 report types</span><br>
+├── <span class="file">users.php</span>          <span class="file-note">── Admin: create/manage system user accounts</span><br>
+├── <span class="file">manage_areas.php</span>   <span class="file-note">── Admin: add/edit service areas (barangays)</span><br>
+├── <span class="file">manage_packages.php</span><span class="file-note">── Admin: define internet plans + materials</span><br>
+├── <span class="file">bulk_print.php</span>     <span class="file-note">── Admin: batch-print billing statements by area</span><br>
+├── <span class="file">settings.php</span>       <span class="file-note">── Admin: reminder text, tagline, password change</span><br>
+│<br>
+├── <span class="file">print_billing_statement.php</span>  <span class="file-note">── Print template: Statement of Account (SOA)</span><br>
+├── <span class="file">print_invoice.php</span>            <span class="file-note">── Print template: Payment invoice</span><br>
+├── <span class="file">print_receipt.php</span>            <span class="file-note">── Print template: Official receipt</span><br>
+├── <span class="file">print_installation.php</span>       <span class="file-note">── Print template: Installation work order</span><br>
+├── <span class="file">print_sketch.php</span>             <span class="file-note">── Print template: Network sketch/photo</span><br>
+│<br>
+├── <span class="folder">ajax/</span><br>
+│   ├── <span class="highlight-file">check_updates.php</span>        <span class="file-note">── Real-time poll endpoint (key counts + timestamp)</span><br>
+│   ├── <span class="file">search_customers.php</span>     <span class="file-note">── Live search dropdown for payments page</span><br>
+│   ├── <span class="file">dashboard_search.php</span>     <span class="file-note">── Global search from dashboard</span><br>
+│   ├── <span class="file">get_customer_billings.php</span><span class="file-note">── Fetch billing periods for a given customer</span><br>
+│   └── <span class="file">get_material_names.php</span>   <span class="file-note">── Fetch installation material list</span><br>
+│<br>
+├── <span class="folder">includes/</span><br>
+│   ├── <span class="file">header.php</span>     <span class="file-note">── Top navigation bar with logo</span><br>
+│   └── <span class="file">sidebar.php</span>    <span class="file-note">── Left navigation (role-aware visibility)</span><br>
+│<br>
+├── <span class="folder">js/</span><br>
+│   ├── <span class="highlight-file">realtime.js</span>   <span class="file-note">── Real-time AJAX polling engine</span><br>
+│   ├── <span class="file">script.js</span>      <span class="file-note">── Main UI interactions (tabs, modals, search)</span><br>
+│   └── <span class="file">payment.js</span>     <span class="file-note">── Payment form logic and validation</span><br>
+│<br>
+├── <span class="folder">css/</span>  style.css   <span class="file-note">── All page styling (41KB)</span><br>
+├── <span class="folder">images/</span>           <span class="file-note">── Logo, header logo, nav icons, SVG assets</span><br>
+├── <span class="folder">uploads/sketches/</span> <span class="file-note">── Uploaded installation sketch images</span><br>
+│<br>
+├── <span class="highlight-file">database.sql</span>          <span class="file-note">── Full schema + seed data (import this first)</span><br>
+├── <span class="highlight-file">database_upgrade_v3.sql</span><span class="file-note">── v2.0 schema additions (import after main)</span><br>
+└── SYSTEM_DOCUMENTATION.md  <span class="file-note">── Full developer reference</span>
+    </div>
+  </div>
+
+  <!-- ───────────────── 4. ROLES ───────────────── -->
+  <div class="section" id="roles">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>User Roles & Permissions</h2>
+    </div>
+    <p>The system uses three roles enforced by <code>check_permission()</code> in <code>config.php</code>. The sidebar automatically shows only the pages each role can access.</p>
+
+    <div class="role-grid">
+      <div class="role-card admin">
+        <div class="role-name">👑 ADMIN</div>
+        <ul>
+          <li>Full system access</li>
+          <li>Manage subscribers</li>
+          <li>Generate billings</li>
+          <li>Record payments</li>
+          <li>View all reports</li>
+          <li>Manage users</li>
+          <li>Manage areas & packages</li>
+          <li>Bulk print</li>
+          <li>System settings</li>
+          <li>Disconnect / Reconnect</li>
+        </ul>
+      </div>
+      <div class="role-card accounting">
+        <div class="role-name">📋 ACCOUNTING</div>
+        <ul>
+          <li>View subscribers</li>
+          <li>Generate billings</li>
+          <li>View billing records</li>
+          <li>View unpaid bills</li>
+          <li>Access all reports</li>
+          <li>View customer ledger</li>
+          <li>Cannot record payments</li>
+          <li>Cannot manage users</li>
+          <li>Cannot edit subscribers</li>
+        </ul>
+      </div>
+      <div class="role-card cashier">
+        <div class="role-name">🏧 CASHIER</div>
+        <ul>
+          <li>Search subscribers</li>
+          <li>Record payments</li>
+          <li>Print invoices</li>
+          <li>Print receipts</li>
+          <li>View subscriber list</li>
+          <li>Cannot generate billings</li>
+          <li>Cannot view reports</li>
+          <li>Cannot manage anything</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:20px;">
+      <div class="callout-icon">⚠️</div>
+      <p><strong>Default Credentials — Change Immediately:</strong> admin / admin123 &nbsp;|&nbsp; accounting / password123 &nbsp;|&nbsp; cashier / password123. These must be changed right after setup. Passwords are stored using <code>password_hash()</code> (bcrypt).</p>
+    </div>
+  </div>
+
+  <!-- ───────────────── 5. MODULES ───────────────── -->
+  <div class="section" id="modules">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>System Modules</h2>
+    </div>
+    <p>Click each module to expand the full explanation.</p>
+
+    <div class="workflow-item">
+      <div class="workflow-header" onclick="toggleWF(this)">
+        <span class="wf-icon">🔐</span>
+        <span class="wf-title">Authentication — login.php, logout.php, config.php</span>
+        <span class="wf-arrow">▶</span>
+      </div>
+      <div class="workflow-body">
+        <p style="color:var(--text-muted);font-size:13px;padding-top:12px;">Login via username + password using PHP's <code>password_verify()</code> against the bcrypt hash stored in the <code>users</code> table. On success, a session is created with <code>user_id</code>, <code>role</code>, and <code>full_name</code>. Every protected page calls <code>check_permission()</code> at the very top — if the user isn't logged in or lacks the required role, they're immediately redirected. Logout destroys the session completely.</p>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:8px;"><strong style="color:var(--text)">Key helpers in config.php:</strong> <code>getDBConnection()</code> · <code>check_permission($role)</code> · <code>log_activity()</code> · <code>sanitize_input()</code> · <code>format_currency()</code></p>
+      </div>
+    </div>
+
+    <div class="workflow-item">
+      <div class="workflow-header" onclick="toggleWF(this)">
+        <span class="wf-icon">📊</span>
+        <span class="wf-title">Dashboard — index.php</span>
+        <span class="wf-arrow">▶</span>
+      </div>
+      <div class="workflow-body">
+        <p style="color:var(--text-muted);font-size:13px;padding-top:12px;">Shows 4 real-time stat cards: Total Subscribers, Active Subscribers, Unpaid Bills, and Monthly Revenue. Uses SQL <code>COUNT()</code> and <code>SUM()</code> aggregation queries. Quick Action buttons link to the most common tasks. The activity feed section exists in the UI but data wiring is still partially in development. The realtime.js script updates the stat numbers automatically every 5 seconds without a page reload.</p>
+      </div>
+    </div>
+
+    <div class="workflow-item">
+      <div class="workflow-header" onclick="toggleWF(this)">
+        <span class="wf-icon">👥</span>
+        <span class="wf-title">Customer Management — customers.php, customer_ledger.php</span>
+        <span class="wf-arrow">▶</span>
+      </div>
+      <div class="workflow-body">
+        <p style="color:var(--text-muted);font-size:13px;padding-top:12px;">Core subscriber CRUD. Each subscriber gets an auto-generated account number like <code>ACC-001</code>. Subscriber names are stored in LASTNAME, FIRSTNAME format. Every subscriber is linked to an Area and a Package. Admin can add, edit, disconnect, reconnect, and confirm installation completion.</p>
+        <div class="status-grid" style="margin:16px 0 8px;">
+          <span class="status-pill active"><span class="dot"></span>active — being billed</span>
+          <span class="status-pill pending"><span class="dot"></span>pending_installation — new, not yet active</span>
+          <span class="status-pill hold"><span class="dot"></span>hold_disconnection — 45+ days overdue, still billed</span>
+          <span class="status-pill disconnected"><span class="dot"></span>disconnected — no new bills generated</span>
+          <span class="status-pill reconnected"><span class="dot"></span>reconnected — returns to active billing</span>
+        </div>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:8px;">The <strong style="color:var(--text)">Customer Ledger</strong> (customer_ledger.php) displays the complete billing and payment history for a single subscriber, including a Status Change History section showing every disconnect/reconnect event with date, time, and staff name.</p>
+      </div>
+    </div>
+
+    <div class="workflow-item">
+      <div class="workflow-header" onclick="toggleWF(this)">
+        <span class="wf-icon">💳</span>
+        <span class="wf-title">Payments — payments.php, print_invoice.php, print_receipt.php</span>
+        <span class="wf-arrow">▶</span>
+      </div>
+      <div class="workflow-body">
+        <p style="color:var(--text-muted);font-size:13px;padding-top:12px;">Used by Cashiers and Admins. The cashier searches for a subscriber using a live autocomplete (powered by <code>ajax/search_customers.php</code>), selects a billing period, enters the OR (Official Receipt) number, amount, payment date, and method. The OR number must be unique — it is validated before the record is saved. Based on whether the amount covers the full net_amount, the billing status becomes <code>paid</code> or <code>partial</code>.</p>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:8px;"><strong style="color:var(--text)">Payment Methods:</strong> Cash · Check · Online · Others</p>
+      </div>
+    </div>
+
+    <div class="workflow-item">
+      <div class="workflow-header" onclick="toggleWF(this)">
+        <span class="wf-icon">📄</span>
+        <span class="wf-title">Billings — billings.php, print_billing_statement.php, bulk_print.php</span>
+        <span class="wf-arrow">▶</span>
+      </div>
+      <div class="workflow-body">
+        <p style="color:var(--text-muted);font-size:13px;padding-top:12px;">The billing engine generates one monthly charge record per active subscriber. Admin picks the Month + Year, clicks Generate, and the system creates records for all active and hold_disconnection subscribers. Disconnected and pending_installation subscribers are skipped. A <code>UNIQUE KEY</code> on (customer_id, billing_month, billing_year) prevents duplicate billing.</p>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:10px;">Additional fees (installation, reconnection, adjustments) are tracked in a separate <code>billing_fees</code> table linked to each billing record. The billing statement print page shows any pending balance from previous months highlighted in red.</p>
+      </div>
+    </div>
+
+    <div class="workflow-item">
+      <div class="workflow-header" onclick="toggleWF(this)">
+        <span class="wf-icon">🔴</span>
+        <span class="wf-title">Unpaid Bills — unpaid.php</span>
+        <span class="wf-arrow">▶</span>
+      </div>
+      <div class="workflow-body">
+        <p style="color:var(--text-muted);font-size:13px;padding-top:12px;">A quick overview of all outstanding balances, powered by the <code>v_unpaid_subscriptions</code> database view. Can be filtered by Area, Month, and Year. Color-coded rows indicate urgency:</p>
+        <ul style="color:var(--text-muted);font-size:13px;padding-left:20px;margin-top:10px;line-height:2;">
+          <li>🟢 <strong style="color:var(--accent)">Green</strong> — Less than 30 days overdue</li>
+          <li>🟡 <strong style="color:var(--accent3)">Yellow</strong> — 30 to 60 days overdue</li>
+          <li>🔴 <strong style="color:var(--accent4)">Red</strong> — 60+ days overdue (consider disconnection)</li>
+        </ul>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:10px;">When printing, sidebar and action buttons are hidden for a clean output.</p>
+      </div>
+    </div>
+
+    <div class="workflow-item">
+      <div class="workflow-header" onclick="toggleWF(this)">
+        <span class="wf-icon">📈</span>
+        <span class="wf-title">Reports — reports.php + 5 dedicated report pages</span>
+        <span class="wf-arrow">▶</span>
+      </div>
+      <div class="workflow-body">
+        <table class="tech-table" style="margin-top:16px;">
+          <thead><tr><th>Report</th><th>File</th><th>What it shows</th></tr></thead>
+          <tbody>
+            <tr><td>Monthly Billing</td><td><code>monthly_billing_report.php</code></td><td>All billings generated for a selected month</td></tr>
+            <tr><td>Monthly Sales</td><td><code>monthly_sales_report.php</code></td><td>Revenue collected, broken down by payment method</td></tr>
+            <tr><td>Unpaid Accounts</td><td><code>unpaid_accounts_report.php</code></td><td>All subscribers with outstanding balances</td></tr>
+            <tr><td>For Disconnection</td><td><code>for_disconnection_report.php</code></td><td>60+ days overdue or hold_disconnection status</td></tr>
+            <tr><td>Last Payment Dates</td><td><code>last_payment_report.php</code></td><td>When each subscriber last paid (payment behavior)</td></tr>
+          </tbody>
+        </table>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:12px;">All reports are printable via browser print dialog and can be saved as PDF. No CSV/Excel export yet (planned).</p>
+      </div>
+    </div>
+
+    <div class="workflow-item">
+      <div class="workflow-header" onclick="toggleWF(this)">
+        <span class="wf-icon">📦</span>
+        <span class="wf-title">Packages & Areas — manage_packages.php, manage_areas.php</span>
+        <span class="wf-arrow">▶</span>
+      </div>
+      <div class="workflow-body">
+        <p style="color:var(--text-muted);font-size:13px;padding-top:12px;"><strong style="color:var(--text)">Packages</strong> define the internet plans (e.g., 10 Mbps for ₱799/month). Each package can have a list of installation materials attached to it (stored in the <code>package_materials</code> table), which appears on the installation work order form when printed.</p>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:8px;"><strong style="color:var(--text)">Areas</strong> represent service zones — typically barangays or districts. Every subscriber is tagged to one area, allowing reports and bulk printing to be filtered by geographic zone.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────── 6. BILLING LOGIC ───────────────── -->
+  <div class="section" id="billing-logic">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Billing Logic — How Bills Are Calculated</h2>
+    </div>
+    <p>When Admin generates billing for a given month, the engine runs through every active subscriber. Here's exactly how each bill is computed:</p>
+
+    <div class="formula-box">
+      <div class="formula-title">BILL CALCULATION FORMULA</div>
+      <div class="formula-row">
+        <span class="label">internet_fee</span>
+        <span class="val">= subscriber's monthly package fee (can be overridden per customer)</span>
+      </div>
+      <div class="formula-row">
+        <span class="label">+ cable_fee</span>
+        <span class="val">= optional cable TV charge (default 0)</span>
+      </div>
+      <div class="formula-row">
+        <span class="label">+ service_fee</span>
+        <span class="val">= repair / call-out fee (default 0)</span>
+      </div>
+      <div class="formula-row">
+        <span class="label">+ material_fee</span>
+        <span class="val">= hardware/materials charge (default 0)</span>
+      </div>
+      <div class="formula-row">
+        <span class="label">+ previous_balance</span>
+        <span class="val">= SUM of all unpaid net_amount values from prior months (auto-carried)</span>
+      </div>
+      <div class="formula-row">
+        <span class="label">= total_amount</span>
+        <span class="val">= sum of all the above</span>
+      </div>
+      <div class="formula-row">
+        <span class="label">− discount</span>
+        <span class="val">= any applied discount (default 0)</span>
+      </div>
+      <div class="formula-total">
+        net_amount = total_amount − discount &nbsp;←&nbsp; This is what the subscriber owes
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <p><strong>Previous Balance Carryover:</strong> If a subscriber has unpaid bills from any prior months, the total of those unpaid <code>net_amount</code> values is automatically added to this month's bill as <code>previous_balance</code>. This means a subscriber's bill grows each month they don't pay. The billing statement print page shows this as a red-highlighted "Total Pending Balance" box.</p>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-icon">✅</div>
+      <p><strong>Duplicate Prevention:</strong> The <code>billings</code> table has a <code>UNIQUE KEY</code> on <code>(customer_id, billing_month, billing_year)</code>. Running Generate twice for the same month will not create duplicate records — the second run simply skips existing entries.</p>
+    </div>
+  </div>
+
+  <!-- ───────────────── 7. REAL-TIME ───────────────── -->
+  <div class="section" id="realtime">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Real-Time Sync — How It Works</h2>
+    </div>
+    <p>The system doesn't use WebSockets. Instead, it uses <strong>AJAX polling</strong> — the browser quietly checks for changes every 5 seconds in the background.</p>
+
+    <div class="realtime-diagram">
+      <div class="rt-row"><span class="rt-label">File</span><span class="rt-val">js/realtime.js &amp; ajax/check_updates.php</span></div>
+      <div class="rt-row"><span class="rt-label">Poll Interval</span><span class="rt-val">Every 5 seconds (5000ms)</span></div>
+      <div class="rt-row"><span class="rt-label">Endpoint</span><span class="rt-val">ajax/check_updates.php — returns JSON snapshot of key DB counts</span></div>
+      <div class="rt-row"><span class="rt-label">Change Detection</span><span class="rt-val">Compares new snapshot to stored lastSnapshot — detects any difference in counts or latest activity timestamp</span></div>
+      <div class="rt-row"><span class="rt-label">Dashboard</span><span class="rt-val">Updates stat card numbers in-place without reloading the page</span></div>
+      <div class="rt-row"><span class="rt-label">Other Pages</span><span class="rt-val">Triggers location.reload() for payments, billings, unpaid, reports pages</span></div>
+      <div class="rt-row"><span class="rt-label">Tab Visibility</span><span class="rt-val">Polling pauses when the browser tab is hidden; resumes when visible (saves resources)</span></div>
+      <div class="rt-row"><span class="rt-label">Auth Guard</span><span class="rt-val">If session is not set, endpoint returns {error: 'unauthorized'} and polling stops gracefully</span></div>
+      <div class="rt-row"><span class="rt-label">Excluded Pages</span><span class="rt-val">Does NOT run on login.php or any print_ pages</span></div>
+    </div>
+
+    <p style="margin-top:16px;">The JSON response from <code>check_updates.php</code> looks like this:</p>
+    <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="str">"ts"</span>: <span class="str">"2026-03-20 08:00:00"</span>,  <span class="cm">// latest activity_logs timestamp</span><br>
+&nbsp;&nbsp;<span class="str">"total_customers"</span>: <span class="num">145</span>,<br>
+&nbsp;&nbsp;<span class="str">"active_customers"</span>: <span class="num">138</span>,<br>
+&nbsp;&nbsp;<span class="str">"total_unpaid"</span>: <span class="num">23</span>,<br>
+&nbsp;&nbsp;<span class="str">"total_payments"</span>: <span class="num">890</span>,<br>
+&nbsp;&nbsp;<span class="str">"total_billings"</span>: <span class="num">1540</span>,<br>
+&nbsp;&nbsp;<span class="str">"disconnected"</span>: <span class="num">5</span>,<br>
+&nbsp;&nbsp;<span class="str">"monthly_revenue"</span>: <span class="num">87450.00</span><br>
+}
+    </div>
+
+    <p>If <em>any</em> of these values change between polls, <code>onDataChanged()</code> fires and the appropriate refresh action runs for the current page.</p>
+  </div>
+
+  <!-- ───────────────── 8. DATABASE ───────────────── -->
+  <div class="section" id="database">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Database Structure</h2>
+    </div>
+    <p>Database name: <code>ar_novalink_billing</code>. Engine: InnoDB. Charset: utf8mb4_unicode_ci. Two SQL files: <code>database.sql</code> (v1 base) and <code>database_upgrade_v3.sql</code> (v2 additions).</p>
+
+    <div class="db-grid">
+
+      <div class="db-card">
+        <div class="db-card-header">
+          <span class="table-name">users</span>
+          <span class="table-badge">System accounts</span>
+        </div>
+        <div class="db-field"><span class="col-name">user_id <span class="pk-badge">PK</span></span><span class="col-type">INT</span><span class="col-desc">Auto-increment</span></div>
+        <div class="db-field"><span class="col-name">username</span><span class="col-type">VARCHAR</span><span class="col-desc">Unique login name</span></div>
+        <div class="db-field"><span class="col-name">password</span><span class="col-type">VARCHAR</span><span class="col-desc">Bcrypt hash</span></div>
+        <div class="db-field"><span class="col-name">role</span><span class="col-type">ENUM</span><span class="col-desc">admin / accounting / cashier</span></div>
+        <div class="db-field"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-desc">active / inactive</span></div>
+        <div class="db-field"><span class="col-name">last_login</span><span class="col-type">TIMESTAMP</span><span class="col-desc">Last access time</span></div>
+      </div>
+
+      <div class="db-card">
+        <div class="db-card-header">
+          <span class="table-name">customers</span>
+          <span class="table-badge">Core subscriber records</span>
+        </div>
+        <div class="db-field"><span class="col-name">customer_id <span class="pk-badge">PK</span></span><span class="col-type">INT</span><span class="col-desc">Auto-increment</span></div>
+        <div class="db-field"><span class="col-name">account_number</span><span class="col-type">VARCHAR</span><span class="col-desc">Unique, e.g. ACC-001</span></div>
+        <div class="db-field"><span class="col-name">subscriber_name</span><span class="col-type">VARCHAR</span><span class="col-desc">LASTNAME, FIRSTNAME</span></div>
+        <div class="db-field"><span class="col-name">area_id <span class="fk-badge">FK</span></span><span class="col-type">INT</span><span class="col-desc">→ areas table</span></div>
+        <div class="db-field"><span class="col-name">package_id <span class="fk-badge">FK</span></span><span class="col-type">INT</span><span class="col-desc">→ packages table</span></div>
+        <div class="db-field"><span class="col-name">monthly_fee</span><span class="col-type">DECIMAL</span><span class="col-desc">Override package fee</span></div>
+        <div class="db-field"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-desc">active / disconnected / etc.</span></div>
+        <div class="db-field"><span class="col-name">mac_address</span><span class="col-type">VARCHAR</span><span class="col-desc">Device MAC (v2.0)</span></div>
+        <div class="db-field"><span class="col-name">port_number</span><span class="col-type">VARCHAR</span><span class="col-desc">Network port (v2.0)</span></div>
+      </div>
+
+      <div class="db-card">
+        <div class="db-card-header">
+          <span class="table-name">billings</span>
+          <span class="table-badge">Monthly charge records</span>
+        </div>
+        <div class="db-field"><span class="col-name">billing_id <span class="pk-badge">PK</span></span><span class="col-type">INT</span><span class="col-desc">Auto-increment</span></div>
+        <div class="db-field"><span class="col-name">customer_id <span class="fk-badge">FK</span></span><span class="col-type">INT</span><span class="col-desc">→ customers</span></div>
+        <div class="db-field"><span class="col-name">billing_month</span><span class="col-type">INT</span><span class="col-desc">1–12</span></div>
+        <div class="db-field"><span class="col-name">billing_year</span><span class="col-type">INT</span><span class="col-desc">e.g. 2026</span></div>
+        <div class="db-field"><span class="col-name">internet_fee</span><span class="col-type">DECIMAL</span><span class="col-desc">Monthly subscription</span></div>
+        <div class="db-field"><span class="col-name">previous_balance</span><span class="col-type">DECIMAL</span><span class="col-desc">Carried-over unpaid amount</span></div>
+        <div class="db-field"><span class="col-name">net_amount</span><span class="col-type">DECIMAL</span><span class="col-desc">Final amount owed</span></div>
+        <div class="db-field"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-desc">unpaid / paid / partial</span></div>
+        <div class="db-field"><span class="col-name">due_date</span><span class="col-type">DATE</span><span class="col-desc">Last day of the month</span></div>
+      </div>
+
+      <div class="db-card">
+        <div class="db-card-header">
+          <span class="table-name">payments</span>
+          <span class="table-badge">Payment transactions</span>
+        </div>
+        <div class="db-field"><span class="col-name">payment_id <span class="pk-badge">PK</span></span><span class="col-type">INT</span><span class="col-desc">Auto-increment</span></div>
+        <div class="db-field"><span class="col-name">billing_id <span class="fk-badge">FK</span></span><span class="col-type">INT</span><span class="col-desc">→ billings</span></div>
+        <div class="db-field"><span class="col-name">customer_id <span class="fk-badge">FK</span></span><span class="col-type">INT</span><span class="col-desc">→ customers</span></div>
+        <div class="db-field"><span class="col-name">or_number</span><span class="col-type">VARCHAR</span><span class="col-desc">Unique official receipt #</span></div>
+        <div class="db-field"><span class="col-name">payment_date</span><span class="col-type">DATE</span><span class="col-desc">Date of payment</span></div>
+        <div class="db-field"><span class="col-name">amount_paid</span><span class="col-type">DECIMAL</span><span class="col-desc">Amount received</span></div>
+        <div class="db-field"><span class="col-name">payment_method</span><span class="col-type">ENUM</span><span class="col-desc">cash / check / online / others</span></div>
+        <div class="db-field"><span class="col-name">cashier_id <span class="fk-badge">FK</span></span><span class="col-type">INT</span><span class="col-desc">→ users (who recorded it)</span></div>
+      </div>
+
+      <div class="db-card">
+        <div class="db-card-header">
+          <span class="table-name">activity_logs</span>
+          <span class="table-badge">Full audit trail</span>
+        </div>
+        <div class="db-field"><span class="col-name">log_id <span class="pk-badge">PK</span></span><span class="col-type">INT</span><span class="col-desc">Auto-increment</span></div>
+        <div class="db-field"><span class="col-name">user_id <span class="fk-badge">FK</span></span><span class="col-type">INT</span><span class="col-desc">Who did the action</span></div>
+        <div class="db-field"><span class="col-name">action</span><span class="col-type">VARCHAR</span><span class="col-desc">e.g. LOGIN, RECORD_PAYMENT</span></div>
+        <div class="db-field"><span class="col-name">table_name</span><span class="col-type">VARCHAR</span><span class="col-desc">Which table was affected</span></div>
+        <div class="db-field"><span class="col-name">record_id</span><span class="col-type">INT</span><span class="col-desc">Which record was changed</span></div>
+        <div class="db-field"><span class="col-name">description</span><span class="col-type">TEXT</span><span class="col-desc">Human-readable detail</span></div>
+        <div class="db-field"><span class="col-name">ip_address</span><span class="col-type">VARCHAR</span><span class="col-desc">Requester's IP address</span></div>
+      </div>
+
+      <div class="db-card">
+        <div class="db-card-header">
+          <span class="table-name">v2.0 Upgrade Tables</span>
+          <span class="table-badge">database_upgrade_v3.sql</span>
+        </div>
+        <div class="db-field"><span class="col-name">package_materials</span><span class="col-type">TABLE</span><span class="col-desc">Installation parts per package</span></div>
+        <div class="db-field"><span class="col-name">installation_sketches</span><span class="col-type">TABLE</span><span class="col-desc">Uploaded sketch photos per subscriber</span></div>
+        <div class="db-field"><span class="col-name">customer_status_log</span><span class="col-type">TABLE</span><span class="col-desc">History of all status changes</span></div>
+        <div class="db-field"><span class="col-name">system_settings</span><span class="col-type">TABLE</span><span class="col-desc">Key-value config store</span></div>
+        <div class="db-field"><span class="col-name">billing_fees</span><span class="col-type">TABLE</span><span class="col-desc">Extra fee line items per billing</span></div>
+        <div class="db-field"><span class="col-name">v_unpaid_subscriptions</span><span class="col-type">VIEW</span><span class="col-desc">Unpaid bills with days overdue</span></div>
+        <div class="db-field"><span class="col-name">v_payment_summary</span><span class="col-type">VIEW</span><span class="col-desc">Payment stats per subscriber</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 9. WORKFLOWS ───────────────── -->
+  <div class="section" id="workflows">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>Key Workflows Step-by-Step</h2>
+    </div>
+
+    <p style="margin-bottom:24px;">The most important day-to-day processes in the system:</p>
+
+    <p style="font-weight:600;color:var(--text);margin-bottom:12px;">🆕 New Subscriber Onboarding</p>
+    <div class="flow" style="margin-bottom:28px;">
+      <div class="flow-step"><span class="step-num">1</span>Admin adds subscriber in customers.php</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">2</span>System auto-generates Account Number (ACC-XXX)</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">3</span>Assign Area + Package</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">4</span>Status = Pending Installation</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">5</span>Technician installs; Admin clicks ✅ Done Install</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">6</span>Status → Active; billing begins next month</div>
+    </div>
+
+    <p style="font-weight:600;color:var(--text);margin-bottom:12px;">📅 Monthly Billing Cycle</p>
+    <div class="flow" style="margin-bottom:28px;">
+      <div class="flow-step"><span class="step-num">1</span>Admin opens billings.php</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">2</span>Select Month + Year, click Generate</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">3</span>System queries all active &amp; hold_disconnection subscribers</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">4</span>Calculates bill with previous_balance carryover</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">5</span>Inserts record (skips duplicates)</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">6</span>Print billing statements / bulk print</div>
+    </div>
+
+    <p style="font-weight:600;color:var(--text);margin-bottom:12px;">💰 Payment Processing</p>
+    <div class="flow" style="margin-bottom:28px;">
+      <div class="flow-step"><span class="step-num">1</span>Cashier opens payments.php</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">2</span>Live search subscriber by name or account #</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">3</span>Select billing period (month)</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">4</span>Enter OR #, amount, date, method</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">5</span>Submit — billing status = paid or partial</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">6</span>Print invoice or receipt</div>
+    </div>
+
+    <p style="font-weight:600;color:var(--text);margin-bottom:12px;">🔌 Disconnection Workflow</p>
+    <div class="flow">
+      <div class="flow-step"><span class="step-num">1</span>Subscriber misses payments — balance carries forward</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">2</span>45+ days: Admin sets → hold_disconnection (still billed)</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">3</span>60+ days: Admin sets → disconnected (no new billing)</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">4</span>Subscriber pays outstanding balance</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">5</span>Admin reconnects → status = active</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><span class="step-num">6</span>Billing resumes from next generated month</div>
+    </div>
+  </div>
+
+  <!-- ───────────────── 10. SETUP ───────────────── -->
+  <div class="section" id="setup">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <h2>How to Set Up & Run the System</h2>
+    </div>
+    <p>The system runs on XAMPP locally. No internet connection needed once set up.</p>
+
+    <div class="setup-steps">
+      <div class="setup-step">
+        <div class="step-content">
+          <h4>Install XAMPP</h4>
+          <p>Download and install XAMPP from apachefriends.org. It includes Apache (web server), MySQL (database), and PHP — everything the system needs.</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="step-content">
+          <h4>Place the project folder</h4>
+          <p>Copy the <code>billing_system/</code> folder to: <code>C:\xampp\htdocs\billing_system\</code></p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="step-content">
+          <h4>Start Apache and MySQL</h4>
+          <p>Open XAMPP Control Panel. Click <strong>Start</strong> next to Apache and MySQL. Both should show green status.</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="step-content">
+          <h4>Create the database</h4>
+          <p>Open your browser and go to <code>http://localhost/phpmyadmin</code>. Create a new database named exactly: <code>ar_novalink_billing</code></p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="step-content">
+          <h4>Import database.sql</h4>
+          <p>In phpMyAdmin, select the <code>ar_novalink_billing</code> database, click <strong>Import</strong>, and upload <code>database.sql</code>. This creates all tables, views, and default seed data including the 3 default user accounts.</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="step-content">
+          <h4>Import the v2.0 upgrade</h4>
+          <p>Also import <code>database_upgrade_v3.sql</code> — this adds the v2.0 tables: package_materials, installation_sketches, customer_status_log, system_settings, billing_fees, and the two database views.</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="step-content">
+          <h4>Open the system</h4>
+          <p>Go to <code>http://localhost/billing_system/</code> in your browser. Log in with <code>admin</code> / <code>admin123</code>. <strong>Change all default passwords immediately.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:8px;">
+      <div class="callout-icon">⚠️</div>
+      <p><strong>Production deployment note:</strong> Update <code>DB_PASS</code> in config.php for production. Enable HTTPS and set <code>session.cookie_secure = 1</code>. The system currently has no CSRF protection — add tokens for production use.</p>
+    </div>
+  </div>
+
+  <!-- ───────────────── 11. SECURITY ───────────────── -->
+  <div class="section" id="security">
+    <div class="section-header">
+      <span class="section-num">11</span>
+      <h2>Security Assessment</h2>
+    </div>
+
+    <table class="sec-table">
+      <thead><tr><th>Concern</th><th>Status</th><th>Implementation</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Password Storage</td>
+          <td><span class="ok">✅ Good</span></td>
+          <td>PHP <code>password_hash()</code> bcrypt</td>
+          <td>Adequate for current scale</td>
+        </tr>
+        <tr>
+          <td>SQL Injection</td>
+          <td><span class="ok">✅ Good</span></td>
+          <td>Prepared statements (<code>$conn->prepare()</code>)</td>
+          <td>Adequate — consistently used</td>
+        </tr>
+        <tr>
+          <td>XSS Prevention</td>
+          <td><span class="ok">✅ Good</span></td>
+          <td><code>htmlspecialchars()</code> on all output</td>
+          <td>Adequate for current scope</td>
+        </tr>
+        <tr>
+          <td>Input Sanitization</td>
+          <td><span class="ok">✅ Good</span></td>
+          <td><code>sanitize_input()</code> helper used throughout</td>
+          <td>Adequate</td>
+        </tr>
+        <tr>
+          <td>Session Security</td>
+          <td><span class="ok">✅ Good</span></td>
+          <td>HttpOnly cookies, <code>use_only_cookies = 1</code></td>
+          <td>Set <code>cookie_secure = 1</code> when using HTTPS</td>
+        </tr>
+        <tr>
+          <td>HTTPS Enforcement</td>
+          <td><span class="warn">⚠️ Missing</span></td>
+          <td>Not currently enforced</td>
+          <td>Enable SSL certificate for production</td>
+        </tr>
+        <tr>
+          <td>CSRF Protection</td>
+          <td><span class="bad">❌ None</span></td>
+          <td>No CSRF tokens on any form</td>
+          <td>Add token generation + validation to all POST forms</td>
+        </tr>
+        <tr>
+          <td>Activity Logging</td>
+          <td><span class="ok">✅ Good</span></td>
+          <td><code>log_activity()</code> called on all CREATE/UPDATE/DELETE</td>
+          <td>Add UI to browse audit log (currently no UI)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ───────────────── 12. ARCHITECTURE ───────────────── -->
+  <div class="section" id="architecture">
+    <div class="section-header">
+      <span class="section-num">12</span>
+      <h2>System Architecture</h2>
+    </div>
+    <p>The system follows a classic <strong>3-Tier MVC-like architecture</strong> running entirely on a local XAMPP stack. No external cloud services, no frameworks — just PHP, MySQL, and a browser.</p>
+
+    <div class="arch-diagram">
+      <!-- Tier 1: Presentation -->
+      <div class="arch-tier">
+        <div class="arch-tier-label green">TIER 1 — PRESENTATION (Browser)</div>
+        <div class="arch-tier-inner">
+          <div class="arch-box blue">HTML5 + CSS3<br><span>style.css (41KB)</span></div>
+          <div class="arch-box blue">Vanilla JS<br><span>script.js · payment.js</span></div>
+          <div class="arch-box blue">Real-Time Engine<br><span>realtime.js (poll every 5s)</span></div>
+          <div class="arch-box blue">Print Templates<br><span>print_*.php pages</span></div>
+        </div>
+      </div>
+      <div class="arch-arrow">⬇ HTTP Requests (GET / POST) &nbsp;|&nbsp; ⬆ HTML Response / JSON</div>
+      <!-- Tier 2: Application -->
+      <div class="arch-tier">
+        <div class="arch-tier-label orange">TIER 2 — APPLICATION (Apache + PHP 7.4+)</div>
+        <div class="arch-tier-inner">
+          <div class="arch-box orange">config.php<br><span>DB connect · session · helpers</span></div>
+          <div class="arch-box orange">Page Controllers<br><span>index · customers · billings · payments · reports…</span></div>
+          <div class="arch-box orange">AJAX Endpoints<br><span>ajax/check_updates · search_customers…</span></div>
+          <div class="arch-box orange">Includes<br><span>header.php · sidebar.php</span></div>
+        </div>
+      </div>
+      <div class="arch-arrow">⬇ MySQLi Prepared Statements &nbsp;|&nbsp; ⬆ Result Sets</div>
+      <!-- Tier 3: Data -->
+      <div class="arch-tier">
+        <div class="arch-tier-label accent">TIER 3 — DATA (MySQL / MariaDB)</div>
+        <div class="arch-tier-inner">
+          <div class="arch-box accent">Core Tables<br><span>users · customers · billings · payments · areas · packages</span></div>
+          <div class="arch-box accent">v2.0 Tables<br><span>billing_fees · installation_sketches · customer_status_log · system_settings · package_materials</span></div>
+          <div class="arch-box accent">Views<br><span>v_unpaid_subscriptions · v_payment_summary</span></div>
+          <div class="arch-box accent">Audit<br><span>activity_logs (full trail)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px;color:var(--text-muted);font-size:14px;">The AJAX polling layer in <code>realtime.js</code> adds a thin asynchronous channel on top of the traditional request-response model — it polls <code>ajax/check_updates.php</code> every 5 seconds, compares JSON snapshots, and triggers UI refresh only when data actually changes.</p>
+
+    <div class="arch-request-flow">
+      <div class="section-header" style="border:none;margin-bottom:16px;padding-bottom:0;">
+        <span class="section-num" style="font-size:10px;">REQUEST FLOW</span>
+        <h2 style="font-size:16px;">How a Page Request Travels Through the System</h2>
+      </div>
+      <div class="flow" style="flex-wrap:wrap;">
+        <div class="flow-step"><span class="step-num">1</span>Browser requests <code>payments.php</code></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><span class="step-num">2</span>Apache routes to PHP engine</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><span class="step-num">3</span><code>require 'config.php'</code> — session + DB open</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><span class="step-num">4</span><code>check_permission('cashier')</code> validates role</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><span class="step-num">5</span>PHP queries MySQL via prepared statements</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><span class="step-num">6</span>PHP renders HTML with data embedded</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><span class="step-num">7</span>Browser receives full HTML page</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><span class="step-num">8</span>JS scripts activate; realtime polling starts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────── 13. SWOT ───────────────── -->
+  <div class="section" id="swot">
+    <div class="section-header">
+      <span class="section-num">13</span>
+      <h2>SWOT Analysis</h2>
+    </div>
+    <p>An honest evaluation of the system from a technical and business perspective.</p>
+
+    <div class="swot-grid">
+      <div class="swot-card strength">
+        <div class="swot-header">💪 STRENGTHS</div>
+        <ul>
+          <li>Fully self-contained — runs offline on XAMPP, no internet dependency</li>
+          <li>Role-based access control tightly restricts what each user can do</li>
+          <li>Automatic previous balance carryover prevents billing errors</li>
+          <li>Duplicate billing prevention via UNIQUE KEY constraint</li>
+          <li>Complete audit trail — every action logged with user + IP + timestamp</li>
+          <li>Real-time dashboard updates without full page reloads</li>
+          <li>Print-ready templates for billing statements, receipts, invoices, and installation forms</li>
+          <li>Password security using bcrypt (password_hash)</li>
+          <li>Bulk print functionality for field collection runs by area</li>
+          <li>Customer status lifecycle is well-defined and enforced</li>
+        </ul>
+      </div>
+      <div class="swot-card weakness">
+        <div class="swot-header">⚠️ WEAKNESSES</div>
+        <ul>
+          <li>No CSRF protection on any form — vulnerable to cross-site request forgery</li>
+          <li>HTTPS not enforced — data transmitted in plaintext on HTTP</li>
+          <li>Monthly billing must be manually triggered — no automation</li>
+          <!-- <li>No CSV/Excel export — reports are print-only</li> -->
+          <li>Non-admin users cannot reset their own passwords</li>
+          <!-- <li>No email or SMS notification system for overdue alerts</li> -->
+          <!-- <li>Activity log has no UI — data is captured but not reviewable</li> -->
+          <li>Single-server architecture — no failover or redundancy</li>
+          <!-- <li>APP_VERSION in config.php still shows 1.0.0 despite being v2.0</li> -->
+          <li>Designed for one company only — no multi-branch support</li>
+        </ul>
+      </div>
+      <div class="swot-card opportunity">
+        <div class="swot-header">🚀 OPPORTUNITIES</div>
+        <ul>
+          <li>Add GCash / PayMaya payment gateway for online collections</li>
+          <li>SMS billing reminders via Semaphore or Vonage API (affordable in PH)</li>
+          <li>Customer self-service portal reduces office foot traffic</li>
+          <li>Cron job auto-billing reduces monthly admin workload to zero</li>
+          <li>Chart.js dashboard charts for revenue trends and customer growth</li>
+          <li>CSV/Excel export allows external accounting tool integration</li>
+          <li>Mobile-responsive field technician view for on-site installations</li>
+          <li>RESTful API layer could open integration with 3rd-party ISP tools</li>
+          <li>Multi-branch support to scale across more offices or franchises</li>
+          <li>Cloud migration (e.g. shared hosting) for remote access</li>
+        </ul>
+      </div>
+      <div class="swot-card threat">
+        <div class="swot-header">🔴 THREATS</div>
+        <ul>
+          <li>CSRF vulnerability could allow unauthorized payment or account changes</li>
+          <li>No HTTPS means credentials can be intercepted on the local network</li>
+          <li>Default passwords (admin123) pose risk if not changed after setup</li>
+          <li>No database backup utility — hardware failure = data loss</li>
+          <li>Single point of failure — if XAMPP host goes down, system is inaccessible</li>
+          <li>No rate limiting on login — brute-force attacks are possible</li>
+          <li>Dependent on local machine uptime — power outage stops operations</li>
+          <li>Rapid subscriber growth could strain unoptimized queries</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────── 14. GLOSSARY ───────────────── -->
+  <div class="section" id="glossary">
+    <div class="section-header">
+      <span class="section-num">14</span>
+      <h2>Glossary of Terms</h2>
+    </div>
+    <p>Key terms used throughout the system — in the code, database, and documentation.</p>
+
+    <div class="glossary-list">
+
+      <div class="gloss-item">
+        <div class="gloss-term">OR Number <span class="gloss-badge">Official Receipt</span></div>
+        <div class="gloss-def">A unique reference number assigned to every payment transaction. Provided by the cashier at time of payment. Must be globally unique across all payments in the system. Used for tracking and audit purposes.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Account Number <span class="gloss-badge">e.g. ACC-001</span></div>
+        <div class="gloss-def">Auto-generated unique identifier for each subscriber. Format is ACC- followed by a zero-padded number. Used to quickly look up a customer instead of searching by name.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Previous Balance</div>
+        <div class="gloss-def">The total sum of all unpaid net_amount values from prior billing months for a subscriber. Automatically carried forward and added to the current month's bill during billing generation.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Net Amount</div>
+        <div class="gloss-def">The final amount a subscriber owes for a billing period. Calculated as total_amount minus any discount. This is what appears on the billing statement as "Amount Due."</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Billing Generation</div>
+        <div class="gloss-def">The manual process of creating one billing record per active subscriber for a selected month and year. Triggered by Admin from the Billings page. Skips disconnected subscribers and skips duplicates via a UNIQUE KEY constraint.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Hold Disconnection <span class="gloss-badge">Status</span></div>
+        <div class="gloss-def">A subscriber status assigned when overdue by 45+ days. The subscriber is still included in billing generation (bills continue to accumulate) but is flagged as a disconnection risk. Shows in yellow on the Unpaid Bills report.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Prepared Statement</div>
+        <div class="gloss-def">A PHP/MySQL technique ($conn->prepare()) where SQL queries are pre-compiled with placeholders (?), and user input is bound separately. This prevents SQL injection attacks by ensuring user data is never interpreted as SQL code.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">AJAX Polling</div>
+        <div class="gloss-def">A technique where the browser silently sends a request to the server at regular intervals (every 5 seconds) to check for new data, without the user needing to refresh the page. Used by realtime.js to keep the dashboard current.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Session</div>
+        <div class="gloss-def">A PHP mechanism that stores user data (user_id, role, full_name) on the server temporarily after login. Every protected page checks the session to confirm the user is authenticated before showing any content.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Bcrypt <span class="gloss-badge">password_hash()</span></div>
+        <div class="gloss-def">A one-way password hashing algorithm used to store passwords securely. Even if the database is stolen, bcrypt hashes cannot be reversed to obtain the original password. PHP's password_hash() uses bcrypt by default.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Area / Barangay</div>
+        <div class="gloss-def">A service coverage zone used to group subscribers geographically. Every subscriber is assigned to one area. Areas are used for filtering reports, bulk printing billing statements, and field collection routing.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Package</div>
+        <div class="gloss-def">An internet subscription plan with a defined bandwidth (Mbps) and monthly fee. Each subscriber is linked to a package. A subscriber's monthly billing fee defaults to the package fee but can be individually overridden.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Customer Ledger</div>
+        <div class="gloss-def">A per-subscriber financial history page showing all billing records, payment history, total balance, and the status change log (disconnections, reconnections, installations) in chronological order.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Database View <span class="gloss-badge">SQL VIEW</span></div>
+        <div class="gloss-def">A saved SQL query that behaves like a virtual table. The system uses v_unpaid_subscriptions (all overdue bills with days overdue calculated) and v_payment_summary (payment statistics per customer). Views simplify complex queries into one reusable object.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Activity Log</div>
+        <div class="gloss-def">An audit trail stored in the activity_logs table. Every significant action (login, payment recorded, customer added, status changed) is automatically written here with the user ID, action type, affected record, description, and IP address.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">CSRF <span class="gloss-badge">Security Term</span></div>
+        <div class="gloss-def">Cross-Site Request Forgery — a type of attack where a malicious website tricks a logged-in user's browser into performing unwanted actions on the billing system. Currently not protected against in this system.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">LCP / NAP / Port Number <span class="gloss-badge">Network Terms</span></div>
+        <div class="gloss-def">Network infrastructure identifiers stored per subscriber in v2.0. LCP = Local Convergence Point (fiber distribution point). NAP = Network Access Point (where fiber reaches the subscriber). Port = the specific port on the OLT/switch used for the subscriber's connection.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">utf8mb4</div>
+        <div class="gloss-def">A MySQL character set that supports the full Unicode standard including emoji and Filipino characters. The system uses utf8mb4_unicode_ci as the database collation to ensure all characters are stored and compared correctly.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 15. PANEL Q&A ───────────────── -->
+  <div class="section" id="panel-qa">
+    <div class="section-header">
+      <span class="section-num">15</span>
+      <h2>Likely Panel Questions &amp; Answers</h2>
+    </div>
+    <p>Common questions a technical panel or reviewer may ask about this system — with clear, confident answers.</p>
+
+    <div class="qa-list">
+
+      <div class="qa-item">
+        <div class="qa-q">❓ Why did you choose PHP and MySQL instead of a modern framework like Laravel or a JavaScript framework?</div>
+        <div class="qa-a"><strong>A:</strong> The system is designed for deployment on a local XAMPP environment in a small ISP setting where the operator may not have access to a terminal, Node.js, or Composer. Vanilla PHP with procedural style requires zero build steps — just copy the folder and import the SQL file. This keeps the deployment barrier as low as possible for a non-technical office environment while still producing a fully functional, secure system.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ How does the system prevent duplicate billing for the same subscriber in the same month?</div>
+        <div class="qa-a"><strong>A:</strong> The database has a <code>UNIQUE KEY</code> constraint on the combination of <code>(customer_id, billing_month, billing_year)</code> in the <code>billings</code> table. Even if the Admin clicks Generate multiple times, the database will reject any insert that would create a duplicate. The application also checks before inserting and reports a skip count rather than throwing an error to the user.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ How is real-time updating implemented? Does the system use WebSockets?</div>
+        <div class="qa-a"><strong>A:</strong> No WebSockets are used. The system uses AJAX polling via <code>realtime.js</code>. Every 5 seconds, the browser silently fetches <code>ajax/check_updates.php</code>, which returns a small JSON snapshot of key database counts and the latest activity timestamp. The JavaScript compares this to the previous snapshot. If anything changed, it either updates the dashboard stat cards in-place (no reload) or triggers a full page reload for data-heavy pages like payments or billings. Polling is paused when the browser tab is hidden to save resources.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ How does the system handle a subscriber who hasn't paid for multiple months?</div>
+        <div class="qa-a"><strong>A:</strong> The billing engine automatically queries the sum of all unpaid <code>net_amount</code> values from prior months and stores that as <code>previous_balance</code> in the new billing record. This means the overdue amount is always carried forward and added to the current bill. The Unpaid Bills page also color-codes urgency — green under 30 days, yellow 30–60, red 60+. The Admin can then manually set the subscriber to <code>hold_disconnection</code> at 45 days or <code>disconnected</code> at 60 days.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ What security measures are in place to protect sensitive subscriber and payment data?</div>
+        <div class="qa-a"><strong>A:</strong> Passwords are stored using bcrypt via PHP's <code>password_hash()</code>. All database queries use prepared statements to prevent SQL injection. Output is escaped with <code>htmlspecialchars()</code> to prevent XSS. Sessions use HttpOnly cookies. Role-based access control restricts every page via <code>check_permission()</code>. All actions are logged to the <code>activity_logs</code> table with the user ID and IP address. The known gaps are: CSRF tokens are not yet implemented, and HTTPS is not enforced — both should be addressed before production deployment.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ What is the purpose of the activity_logs table? Can users view it?</div>
+        <div class="qa-a"><strong>A:</strong> The <code>activity_logs</code> table serves as a complete audit trail — every login, payment, customer edit, status change, and report generation is recorded with the acting user's ID, the affected table and record, a human-readable description, and the IP address. However, as of v2.0, there is no UI page to view or filter the log. The data is being captured but can only currently be accessed directly via phpMyAdmin or a database client. An audit log viewer page is a high-priority item on the roadmap.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ How does the role-based access control work technically?</div>
+        <div class="qa-a"><strong>A:</strong> Every protected page starts with a call to <code>check_permission($required_role)</code> defined in <code>config.php</code>. This function checks if a valid session exists and whether the user's role meets the requirement. If not, it redirects immediately — the page content never renders. The sidebar in <code>includes/sidebar.php</code> also conditionally shows navigation links based on <code>$_SESSION['role']</code>, so users never even see links to pages they can't access.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ What happens to a subscriber's billing when they are disconnected and later reconnected?</div>
+        <div class="qa-a"><strong>A:</strong> When a subscriber is set to <code>disconnected</code>, they are excluded from future billing generation — no new billing records are created for them. Their existing unpaid balances remain in the database. When the Admin reconnects them (status → <code>active</code>), billing resumes from the next time the Admin runs the monthly Generate process. The reconnection event is logged in the <code>customer_status_log</code> table with date, time, and the staff member who performed the action, visible in the Customer Ledger.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ How would you scale or improve this system if subscriber numbers grew significantly?</div>
+        <div class="qa-a"><strong>A:</strong> Several improvements would be needed at scale: (1) Add database indexes on frequently queried columns like <code>billing_month</code>, <code>billing_year</code>, and <code>status</code>. (2) Migrate from local XAMPP to a managed server or cloud hosting for uptime and remote access. (3) Implement a cron-based auto-billing scheduler to eliminate manual monthly triggers. (4) Introduce pagination and lazy loading on large list pages. (5) Add a Redis or file-based cache for the dashboard stat queries so they don't hit the database on every poll.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ Why is the billing due date set to the last day of the month?</div>
+        <div class="qa-a"><strong>A:</strong> The system sets <code>due_date</code> to the last calendar day of the billing month, with a 7-day grace period understood by the staff in practice. This design means billing for March is due by March 31. It aligns with a common ISP billing cycle where the bill covers the current month's service and is due before the month ends. The system uses PHP's <code>date('Y-m-t')</code> to dynamically compute the last day regardless of whether the month has 28, 30, or 31 days.</div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-q">❓ What is the difference between database.sql and database_upgrade_v3.sql?</div>
+        <div class="qa-a"><strong>A:</strong> <code>database.sql</code> is the original v1.0 schema — it creates the core tables (users, customers, billings, payments, areas, packages, activity_logs) and seeds default data including the three default user accounts. <code>database_upgrade_v3.sql</code> is a migration script that adds the v2.0 feature tables without dropping existing data: package_materials, installation_sketches, customer_status_log, system_settings, billing_fees, and the two database views. Both must be imported in sequence for the full v2.0 system to work correctly.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<style>
+  /* ── ARCHITECTURE ── */
+  .arch-diagram {
+    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .arch-tier {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .arch-tier-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    padding: 8px 18px;
+    font-weight: 700;
+  }
+  .arch-tier-label.green { background: rgba(0,229,160,0.08); color: var(--accent); border-bottom: 1px solid rgba(0,229,160,0.2); }
+  .arch-tier-label.orange { background: rgba(245,166,35,0.08); color: var(--accent3); border-bottom: 1px solid rgba(245,166,35,0.2); }
+  .arch-tier-label.accent { background: rgba(0,180,216,0.08); color: var(--accent2); border-bottom: 1px solid rgba(0,180,216,0.2); }
+  .arch-tier-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 18px;
+    background: var(--surface);
+  }
+  .arch-box {
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid;
+    line-height: 1.5;
+  }
+  .arch-box span { display: block; font-size: 11px; font-weight: 400; margin-top: 2px; opacity: 0.7; font-family: 'Space Mono', monospace; }
+  .arch-box.blue { color: var(--accent2); border-color: rgba(0,180,216,0.25); background: rgba(0,180,216,0.05); }
+  .arch-box.orange { color: var(--accent3); border-color: rgba(245,166,35,0.25); background: rgba(245,166,35,0.05); }
+  .arch-box.accent { color: var(--accent); border-color: rgba(0,229,160,0.25); background: rgba(0,229,160,0.04); }
+  .arch-arrow {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+    padding: 10px 0;
+    letter-spacing: 0.5px;
+  }
+  .arch-request-flow {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-top: 20px;
+  }
+
+  /* ── SWOT ── */
+  .swot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  @media (max-width: 640px) { .swot-grid { grid-template-columns: 1fr; } }
+  .swot-card {
+    border-radius: var(--radius);
+    border: 1px solid;
+    overflow: hidden;
+  }
+  .swot-card.strength { border-color: rgba(0,229,160,0.3); }
+  .swot-card.weakness { border-color: rgba(224,92,92,0.3); }
+  .swot-card.opportunity { border-color: rgba(0,180,216,0.3); }
+  .swot-card.threat { border-color: rgba(245,166,35,0.3); }
+  .swot-header {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 18px;
+    letter-spacing: 1px;
+  }
+  .swot-card.strength .swot-header { background: rgba(0,229,160,0.08); color: var(--accent); }
+  .swot-card.weakness .swot-header { background: rgba(224,92,92,0.08); color: var(--accent4); }
+  .swot-card.opportunity .swot-header { background: rgba(0,180,216,0.08); color: var(--accent2); }
+  .swot-card.threat .swot-header { background: rgba(245,166,35,0.08); color: var(--accent3); }
+  .swot-card ul { list-style: none; padding: 14px 18px; background: var(--surface); }
+  .swot-card li {
+    font-size: 13px; color: var(--text-muted); padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 8px; align-items: flex-start;
+    line-height: 1.5;
+  }
+  .swot-card li:last-child { border-bottom: none; }
+  .swot-card li::before { content: '•'; flex-shrink: 0; margin-top: 1px; }
+  .swot-card.strength li::before { color: var(--accent); }
+  .swot-card.weakness li::before { color: var(--accent4); }
+  .swot-card.opportunity li::before { color: var(--accent2); }
+  .swot-card.threat li::before { color: var(--accent3); }
+
+  /* ── GLOSSARY ── */
+  .glossary-list { margin-top: 20px; }
+  .gloss-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 640px) { .gloss-item { grid-template-columns: 1fr; gap: 6px; } }
+  .gloss-item:last-child { border-bottom: none; }
+  .gloss-term {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 700;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .gloss-badge {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-faint);
+    background: var(--surface2);
+    padding: 1px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    display: inline-block;
+    width: fit-content;
+  }
+  .gloss-def { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ── PANEL Q&A ── */
+  .qa-list { margin-top: 20px; }
+  .qa-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .qa-item:hover { border-color: rgba(0,229,160,0.3); }
+  .qa-q {
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .qa-a {
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+  .qa-a strong { color: var(--accent); }
+  .qa-a code {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: rgba(0,229,160,0.07);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+</style>
+
+<footer style="
+  background: #002060;
+  color: rgba(255,255,255,0.85);
+  text-align: center;
+  padding: 16px 20px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  margin-top: auto;
+  border-top: none;
+">
+  <p style="margin:0;">Developed by <strong style="color:#fff;">Passi City College</strong> — Bachelor of Science in Information Technology</p>
+  <p style="font-size:14px;font-weight:700;color:#fff;letter-spacing:1px;margin-top:4px;">Cyber Squad</p>
+</footer>
+
+<script>
+function toggleWF(header) {
+  header.classList.toggle('open');
+  var body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

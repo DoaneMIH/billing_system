@@ -85,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_SESSION
             }
         }
     }
+
 }
 
 /* Next account number */
@@ -108,6 +109,9 @@ $packages_list=$conn->query("SELECT * FROM packages WHERE status='active' ORDER 
         <div class="page-header"><div><h1>Subscriber Management</h1><p>Manage subscriber accounts and subscriptions</p></div></div>
         <?php if(isset($success)):?><div class="alert alert-success"><?php echo $success;?></div><?php endif;?>
         <?php if(isset($error)):?><div class="alert alert-error"><?php echo $error;?></div><?php endif;?>
+        <?php if(isset($_GET['deleted']) && $_GET['deleted']!==''):?>
+        <div class="alert alert-success">Subscriber <strong><?php echo htmlspecialchars($_GET['deleted']); ?></strong> has been permanently deleted.</div>
+        <?php endif;?>
 
         <div class="table-container">
             <div class="table-header">
@@ -239,7 +243,7 @@ function displayCustomers(customers, query) {
             if (c.status==='pending_installation') html += '<button onclick="postAction(' + c.customer_id + ',\'confirm_installation\')" class="btn btn-sm btn-success">✅ Done</button> ';
             if (c.status==='active'||c.status==='reconnected') html += '<button onclick="postAction(' + c.customer_id + ',\'disconnect\')" class="btn btn-sm btn-danger">Disconnect</button> ';
             else if (c.status==='disconnected'||c.status==='hold_disconnection') html += '<button onclick="postAction(' + c.customer_id + ',\'reconnect\')" class="btn btn-sm btn-success">Reconnect</button> ';
-            html += '<button onclick="openSketchModal(' + c.customer_id + ')" class="btn btn-sm btn-secondary">Sketch</button>';
+            html += '<button onclick="openSketchModal(' + c.customer_id + ')" class="btn btn-sm btn-secondary">Sketch</button> ';
         }
         html += '</td></tr>';
     });
@@ -289,6 +293,7 @@ var canvas, ctx, drawing = false;
 function initCanvas() { canvas = document.getElementById('sketchCanvas'); ctx = canvas.getContext('2d'); ctx.strokeStyle = '#000'; ctx.lineWidth = 2; canvas.onmousedown = function(e) { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); }; canvas.onmousemove = function(e) { if (drawing) { ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); } }; canvas.onmouseup = function() { drawing = false; }; canvas.onmouseleave = function() { drawing = false; }; }
 function clearCanvas() { if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); }
 function saveCanvas() { if (canvas) document.getElementById('sketch_data').value = canvas.toDataURL(); alert('Drawing saved!'); }
+
 
 /* Load subscribers on page load */
 loadCustomers();
