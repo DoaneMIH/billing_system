@@ -42,6 +42,8 @@ if (!$payment) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Receipt - AR NOVALINK</title>
+        <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
+
     <style>
         * {
             margin: 0;

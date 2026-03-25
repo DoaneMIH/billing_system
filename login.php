@@ -58,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - NOVALINK Billing System</title>
+    <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="login-page">
@@ -110,6 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h3>Default Login Credentials:</h3>
         <ul>
             <li><strong>Admin:</strong> admin / password</li>
+            <li><strong>Cashier:</strong> cashier / password</li>
+            <li><strong>Accounting:</strong> accounting / password</li>
+
         </ul>
     </div>
 </body>

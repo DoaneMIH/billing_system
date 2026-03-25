@@ -20,6 +20,8 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Installation Sketch - <?php echo htmlspecialchars($customer['subscriber_name']); ?></title>
+        <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
+
     <style>
         * { margin:0;padding:0;box-sizing:border-box; }
         body { font-family:Arial,sans-serif;font-size:12px;background:#f5f5f5; }

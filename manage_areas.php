@@ -76,6 +76,8 @@ $areas = $conn->query("SELECT a.*,
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Areas - AR NOVALINK Billing System</title>
+        <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -87,7 +89,7 @@ $areas = $conn->query("SELECT a.*,
         <main class="main-content">
             <div class="page-header">
                 <div>
-                    <h1>Manage Service Areas / Barangays</h1>
+                    <h1>Manage Service Areas</h1>
                     <p>Add, edit, or remove service coverage areas</p>
                 </div>
                 <button onclick="openAddModal()" class="btn btn-primary">
@@ -127,7 +129,7 @@ $areas = $conn->query("SELECT a.*,
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Area / Barangay Name</th>
+                            <th>Area</th>
                             <th>Description</th>
                             <th>Customers</th>
                             <th>Created</th>
@@ -200,8 +202,8 @@ $areas = $conn->query("SELECT a.*,
                     <input type="hidden" name="action" value="add">
                     
                     <div class="form-group">
-                        <label for="area_name">Area / Barangay Name *</label>
-                        <input type="text" id="area_name" name="area_name" required placeholder="e.g., Barangay 1, Poblacion, San Jose">
+                        <label for="area_name">Area*</label>
+                        <input type="text" id="area_name" name="area_name" required placeholder="e.g., Area 1">
                     </div>
                     
                     <div class="form-group">

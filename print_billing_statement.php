@@ -32,6 +32,8 @@ if (empty($customer_ids)) { die("No subscriber selected"); }
 <head>
     <meta charset="UTF-8">
     <title>Billing Statement</title>
+        <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; font-size: 11px; background: #f5f5f5; }

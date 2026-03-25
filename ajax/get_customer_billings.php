@@ -41,6 +41,17 @@ while ($row = $result->fetch_assoc()) {
     $billings[] = $row;
 }
 
+$advance_credit = 0.00;
+$adv = @$conn->query(
+    "SELECT COALESCE(SUM(amount),0) as total
+     FROM advance_payments
+     WHERE customer_id = $customer_id
+     AND applied_billing_id IS NULL"
+);
+if ($adv) {
+    $advance_credit = floatval($adv->fetch_assoc()['total']);
+}
+
 $stmt->close();
 $conn->close();
 

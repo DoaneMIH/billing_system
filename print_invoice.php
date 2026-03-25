@@ -48,6 +48,8 @@ $invoice_number = str_pad($payment['payment_id'], 7, '0', STR_PAD_LEFT);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Invoice - Nova Link Digital Systems</title>
+        <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
+
     <style>
         * {
             margin: 0;
@@ -332,7 +334,8 @@ $invoice_number = str_pad($payment['payment_id'], 7, '0', STR_PAD_LEFT);
             
             <div class="field-row">
                 <span class="field-label">TIN</span>
-                <span class="field-value"><?php echo htmlspecialchars($payment['account_number']); ?></span>
+                <span class="field-value"></span>
+                <!-- <span class="field-value"><?php echo htmlspecialchars($payment['account_number']); ?></span> -->
             </div>
             
             <div class="field-row">

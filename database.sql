@@ -285,6 +285,35 @@ FROM customers c
 LEFT JOIN billings b ON c.customer_id = b.customer_id
 GROUP BY c.customer_id, c.account_number, c.subscriber_name;
 
+
+-- ============================================================
+-- Advance Payment Migration
+-- Run this once to add advance payment support
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS advance_payments (
+    advance_id     INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id    INT NOT NULL,
+    or_number      VARCHAR(50) UNIQUE NOT NULL,
+    payment_date   DATE NOT NULL,
+    amount         DECIMAL(10,2) NOT NULL,
+    payment_method ENUM('cash','check','online','others') DEFAULT 'cash',
+    cashier_id     INT,
+    remarks        TEXT,
+    -- NULL = unused credit; NOT NULL = applied to that billing row
+    applied_billing_id  INT DEFAULT NULL,
+    applied_at          TIMESTAMP NULL DEFAULT NULL,
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (customer_id)         REFERENCES customers(customer_id) ON DELETE CASCADE,
+    FOREIGN KEY (cashier_id)          REFERENCES users(user_id)         ON DELETE SET NULL,
+    FOREIGN KEY (applied_billing_id)  REFERENCES billings(billing_id)   ON DELETE SET NULL,
+
+    INDEX idx_customer   (customer_id),
+    INDEX idx_applied    (applied_billing_id),
+    INDEX idx_date       (payment_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ================================================================
 -- DEFAULT DATA
 -- ================================================================

@@ -108,6 +108,7 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ledger - <?php echo htmlspecialchars($customer['subscriber_name']); ?></title>
+        <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -127,8 +128,8 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
                         <?php $sc = match($customer['status']){'active'=>'success','disconnected'=>'danger','reconnected'=>'info','pending_installation'=>'warning',default=>'secondary'}; ?>
                         <span class="badge badge-<?php echo $sc; ?>"><?php echo ucfirst(str_replace('_',' ',$customer['status'])); ?></span>
                         <?php if($_SESSION['role']==='admin'): ?>
-                        <button onclick="document.getElementById('editSubscriberModal').classList.add('show')" class="btn btn-edit btn-sm no-print">✏️ Edit</button>
-                        <button onclick="document.getElementById('deleteConfirmModal').classList.add('show')" class="btn btn-delete btn-sm no-print">🗑 Delete</button>
+                        <button onclick="document.getElementById('editSubscriberModal').classList.add('show')" class="btn btn-secondary btn-sm">Edit</button>
+                        <button onclick="document.getElementById('deleteConfirmModal').classList.add('show')" class="btn btn-delete btn-sm no-print">Delete</button>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -186,7 +187,7 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
             
             <?php if ($status_log && $status_log->num_rows > 0): ?>
             <div class="widget mb-3">
-                <div class="widget-header"><h2>Status Change History</h2></div>
+                <div class="table-header"><h2>Status Change History</h2></div>
                 <div class="widget-content widget-content-flush">
                     <table>
                         <thead><tr><th>Date</th><th>Time</th><th>Old Status</th><th>New Status</th><th>Staff</th><th>Remarks</th></tr></thead>

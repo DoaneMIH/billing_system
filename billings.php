@@ -40,19 +40,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
             if (!$should_bill) { $skipped++; continue; }
             
             $internet_fee = $customer['monthly_fee'];
-            $total_amount = $previous_balance + $internet_fee;
-            $net_amount = $total_amount;
+
+            /* ── Check for unused advance credits for this subscriber ── */
+            $advance_credit = 0.00;
+            $advance_ids    = [];
+            $adv_result = $conn->query("SELECT advance_id, amount FROM advance_payments WHERE customer_id = $customer_id AND applied_billing_id IS NULL ORDER BY payment_date ASC");
+            if ($adv_result && $adv_result->num_rows > 0) {
+                while ($adv = $adv_result->fetch_assoc()) {
+                    $advance_credit += floatval($adv['amount']);
+                    $advance_ids[]   = intval($adv['advance_id']);
+                }
+            }
+
+            $total_amount   = $previous_balance + $internet_fee;
+            $credit_applied = min($advance_credit, $total_amount);  // can't apply more than owed
+            $net_amount     = max(0, $total_amount - $credit_applied);
+            $billing_status = ($net_amount <= 0) ? 'paid' : 'unpaid';
             $last_day = date('t', strtotime($billing_date));
             $due_date = "$year-$month-$last_day";
             
-            $stmt = $conn->prepare("INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, material_fee, previous_balance, total_amount, discount, net_amount, due_date, auto_generated) VALUES (?,?,?,?,0,0,0,?,?,0,?,?,1)");
-            $stmt->bind_param("iiidddds", $customer_id, $month, $year, $internet_fee, $previous_balance, $total_amount, $net_amount, $due_date);
-            if ($stmt->execute()) { $generated++; } else { $errors[] = $stmt->error; }
+            $stmt = $conn->prepare("INSERT INTO billings (customer_id, billing_month, billing_year, internet_fee, cable_fee, service_fee, material_fee, previous_balance, total_amount, discount, net_amount, due_date, status, auto_generated) VALUES (?,?,?,?,0,0,0,?,?,0,?,?,?,1)");
+            $stmt->bind_param("iiiddddss", $customer_id, $month, $year, $internet_fee, $previous_balance, $total_amount, $net_amount, $due_date, $billing_status);
+            if ($stmt->execute()) {
+                $new_billing_id = $stmt->insert_id;
+                $generated++;
+
+                /* Mark advance payments as applied to this new billing row */
+                if (count($advance_ids) > 0) {
+                    $ids_str = implode(',', $advance_ids);
+                    $conn->query("UPDATE advance_payments SET applied_billing_id = $new_billing_id, applied_at = NOW() WHERE advance_id IN ($ids_str)");
+
+                    /* If credit exceeded the bill, carry the remainder forward */
+                    $remainder = $advance_credit - $credit_applied;
+                    if ($remainder > 0.01) {
+                        $carry_or   = 'ADV-CARRY-' . $customer_id . '-' . $month . $year;
+                        $carry_date = "$year-$month-01";
+                        $uid        = intval($_SESSION['user_id']);
+                        $conn->query("INSERT IGNORE INTO advance_payments (customer_id, or_number, payment_date, amount, payment_method, cashier_id, remarks) VALUES ($customer_id, '$carry_or', '$carry_date', $remainder, 'others', $uid, 'Auto-carried advance credit from billing generation')");
+                    }
+                }
+            } else { $errors[] = $stmt->error; }
             $stmt->close();
         }
         
         log_activity($_SESSION['user_id'], 'GENERATE_BILLING', 'billings', null, "Generated $generated billings for " . get_month_name($month) . " $year");
-        $success = "Generated $generated billings. Skipped $skipped.";
+        $success = "Generated $generated billings for " . get_month_name($month) . " $year. Skipped $skipped." . ($advance_credit > 0 || count($advance_ids) > 0 ? " Advance credits auto-applied where available." : "");
         if (count($errors) > 0) $error = implode(', ', $errors);
     }
     
@@ -114,6 +146,7 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
     <title>Billings - AR NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -131,7 +164,48 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
             
             <?php if (isset($success)): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
             <?php if (isset($error)): ?><div class="alert alert-error"><?php echo $error; ?></div><?php endif; ?>
-            
+
+            <?php if ($_SESSION['role'] == 'admin'): ?>
+            <!-- ── Generate Billing Widget (admin only) ── -->
+            <div class="widget mb-3">
+                <div class="widget-header"><h2>&#128196; Generate Monthly Billing</h2></div>
+                <div class="widget-content">
+                    <p style="font-size:13px;color:var(--dark-gray);margin-bottom:16px;">
+                        Select a month and year then click <strong>Generate</strong>.
+                        The system will create billing rows for all active subscribers.
+                        Existing billings for that period are skipped automatically.
+                        Any unused advance credits will be applied at this step.
+                    </p>
+                    <form method="POST" onsubmit="return confirm('Generate billing for all eligible subscribers for the selected period?');">
+                        <input type="hidden" name="action" value="generate">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Month</label>
+                                <select name="month" required>
+                                    <?php for ($m = 1; $m <= 12; $m++): ?>
+                                    <option value="<?php echo $m; ?>" <?php echo $m == date('n') ? 'selected' : ''; ?>>
+                                        <?php echo get_month_name($m); ?>
+                                    </option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Year</label>
+                                <select name="year" required>
+                                    <?php for ($y = date('Y'); $y <= date('Y') + 1; $y++): ?>
+                                    <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <div class="form-group form-group-btn">
+                                <button type="submit" class="btn btn-primary">&#9889; Generate Billings</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <div class="table-container">
                 <div class="table-header">
                     <h2>View Billings</h2>

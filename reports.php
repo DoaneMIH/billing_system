@@ -41,6 +41,8 @@ $areas_list = $conn->query("SELECT * FROM areas ORDER BY area_name");
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Reports - AR NOVALINK</title>
+    <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
+
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -70,7 +72,7 @@ $areas_list = $conn->query("SELECT * FROM areas ORDER BY area_name");
         <div class="report-tabs no-print">
             <button class="report-tab <?php echo $tab=='monthly'?'active':''; ?>" onclick="location='reports.php?tab=monthly&month=<?php echo $month_filter;?>&year=<?php echo $year_filter;?>'">Monthly Report</button>
             <button class="report-tab <?php echo $tab=='yearly'?'active':''; ?>" onclick="location='reports.php?tab=yearly&year=<?php echo $year_filter;?>'">Yearly Report</button>
-            <button class="report-tab <?php echo $tab=='legacy'?'active':''; ?>" onclick="location='reports.php?tab=legacy&report_type=monthly_billing&month=<?php echo $month_filter;?>&year=<?php echo $year_filter;?>'">Legacy Reports</button>
+            <!-- <button class="report-tab <?php echo $tab=='legacy'?'active':''; ?>" onclick="location='reports.php?tab=legacy&report_type=monthly_billing&month=<?php echo $month_filter;?>&year=<?php echo $year_filter;?>'">Legacy Reports</button> -->
             <button class="report-tab" onclick="window.print()">🖨️ Print</button>
         </div>
 

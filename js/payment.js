@@ -160,8 +160,11 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.onload = function() {
             if (xhr.status === 200) {
                 try {
-                    const billings = JSON.parse(xhr.responseText);
-                    displayBillingPeriods(billings);
+                    const data = JSON.parse(xhr.responseText);
+                    /* Support both old format (array) and new format {billings, advance_credit} */
+                    const billings      = Array.isArray(data) ? data : (data.billings || []);
+                    const advanceCredit = Array.isArray(data) ? 0   : (parseFloat(data.advance_credit) || 0);
+                    displayBillingPeriods(billings, advanceCredit);
                 } catch (e) {
                     console.error('Error parsing JSON:', e);
                     billingPeriodSelect.innerHTML = '<option value="">Error loading billing periods</option>';
@@ -178,11 +181,14 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.send();
     }
     
-    function displayBillingPeriods(billings) {
+    function displayBillingPeriods(billings, advanceCredit) {
+        advanceCredit = advanceCredit || 0;
         if (billings.length === 0) {
             billingPeriodSelect.innerHTML = '<option value="">No unpaid bills found</option>';
             billingPeriodSelect.disabled = true;
-            billingInfo.innerHTML = '<span style="color: var(--success-color);">✓ All bills are paid!</span>';
+            billingInfo.innerHTML = advanceCredit > 0
+                ? '<span style="color:var(--success-color);">&#10003; All bills paid. Advance credit: <strong>&#8369;' + advanceCredit.toFixed(2) + '</strong> — will auto-apply next billing.</span>'
+                : '<span style="color: var(--success-color);">&#10003; All bills are paid!</span>';
             return;
         }
         
@@ -210,10 +216,13 @@ document.addEventListener('DOMContentLoaded', function() {
         billingPeriodSelect.innerHTML = html;
         billingPeriodSelect.disabled = false;
         
+        const creditNote = advanceCredit > 0
+            ? ` &nbsp;|&nbsp; <span style="color:var(--success-color)">Advance credit: &#8369;${advanceCredit.toFixed(2)}</span>`
+            : '';
         billingInfo.innerHTML = `
             <strong style="color: var(--primary-color);">Total Unpaid:</strong> 
-            <span style="color: var(--danger-color); font-size: 14px; font-weight: bold;">₱${totalUnpaid.toFixed(2)}</span> 
-            across ${billings.length} billing period(s)
+            <span style="color: var(--danger-color); font-size: 14px; font-weight: bold;">&#8369;${totalUnpaid.toFixed(2)}</span> 
+            across ${billings.length} billing period(s)${creditNote}
         `;
         
         // Auto-fill amount when billing period is selected
