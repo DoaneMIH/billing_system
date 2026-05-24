@@ -1,5 +1,5 @@
 /**
- * AR NovaLink — Real-Time Sync via AJAX Polling
+ *   NovaLink — Real-Time Sync via AJAX Polling
  * 
  * Polls ajax/check_updates.php every 5 seconds.
  * When data changes, triggers page-specific refresh logic.

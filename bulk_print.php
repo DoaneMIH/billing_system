@@ -11,7 +11,7 @@ $packages = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulk Print - AR NOVALINK</title>
+    <title>Bulk Print - NOVALINK</title>
     <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
     <link rel="stylesheet" href="css/style.css">
 </head>

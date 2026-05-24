@@ -1,4 +1,4 @@
-// AR NOVALINK Billing System - Main JavaScript
+//   NOVALINK Billing System - Main JavaScript
 
 // Utility Functions
 function formatCurrency(amount) {

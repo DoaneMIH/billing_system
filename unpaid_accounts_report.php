@@ -34,7 +34,7 @@ $total_customers = 0;
 ?>
 
 <div class="report-header">
-    <h1>AR NOVALINK DIGITAL SYSTEMS CORP.</h1>
+    <h1>  NOVALINK DIGITAL SYSTEMS CORP.</h1>
     <p>Unpaid Accounts Report</p>
     <p>As of <?php echo date('F d, Y'); ?></p>
 </div>

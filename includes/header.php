@@ -1,7 +1,7 @@
 <header class="main-header">
     <div class="header-content">
         <div class="header-logo">
-            <img src="images/nav.png" alt="AR Novalink Logo">
+            <img src="images/nav.png" alt="  Novalink Logo">
         </div>
         <div class="header-user">
             <div class="user-info">

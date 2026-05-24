@@ -87,7 +87,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management - AR NOVALINK Billing System</title>
+    <title>User Management -   NOVALINK Billing System</title>
         <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
 
     <link rel="stylesheet" href="css/style.css">

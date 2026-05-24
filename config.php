@@ -18,7 +18,7 @@ function getDBConnection() {
 }
 
 // Application Settings
-define('APP_NAME', 'AR NOVALINK Billing System');
+define('APP_NAME', 'NOVALINK Billing System');
 define('APP_VERSION', '1.0.0');
 define('TIMEZONE', 'Asia/Manila');
 

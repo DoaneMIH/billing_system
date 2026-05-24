@@ -120,7 +120,7 @@ if (isset($_GET['err'])) $error = $_GET['err'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Packages - AR NOVALINK</title>
+    <title>Manage Packages - NOVALINK</title>
         <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
 
     <link rel="stylesheet" href="css/style.css">

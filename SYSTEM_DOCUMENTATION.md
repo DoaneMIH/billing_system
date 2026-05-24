@@ -1,4 +1,4 @@
-# 📡 AR NOVALINK BILLING SYSTEM — SYSTEM DOCUMENTATION
+# 📡   NOVALINK BILLING SYSTEM — SYSTEM DOCUMENTATION
 
 > **Version:** 2.0  
 > **Company:** NOVA LINK DIGITAL SYSTEMS CORP.  
@@ -24,7 +24,7 @@
 
 ## 1. System Overview
 
-The **AR NOVALINK Billing System** is a web-based Internet Service Provider (ISP) billing management application. It is designed to handle customer subscriptions, monthly billing generation, payment collection, and financial reporting for NOVA LINK DIGITAL SYSTEMS CORP.
+The **  NOVALINK Billing System** is a web-based Internet Service Provider (ISP) billing management application. It is designed to handle customer subscriptions, monthly billing generation, payment collection, and financial reporting for NOVA LINK DIGITAL SYSTEMS CORP.
 
 ### What the System Does
 
@@ -52,7 +52,7 @@ The **AR NOVALINK Billing System** is a web-based Internet Service Provider (ISP
 
 ### System Identity
 
-- **Application Name:** AR NOVALINK Billing System
+- **Application Name:**   NOVALINK Billing System
 - **Database:** `ar_novalink_billing`
 - **App Version:** 2.0 (v1.0 initial, v2.0 with upgrade schema)
 - **Entry Point:** `login.php` → `index.php` (Dashboard)
@@ -820,7 +820,7 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');           // Change for production!
 define('DB_NAME', 'ar_novalink_billing');
-define('APP_NAME', 'AR NOVALINK Billing System');
+define('APP_NAME', '  NOVALINK Billing System');
 define('APP_VERSION', '1.0.0');
 define('TIMEZONE', 'Asia/Manila');
 ```
@@ -860,7 +860,7 @@ $conn = getDBConnection();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Page Title - AR NOVALINK</title>
+    <title>Page Title -   NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -918,4 +918,4 @@ The billing generator in `billings.php` follows this logic:
 ---
 
 *End of SYSTEM_DOCUMENTATION.md*  
-*Generated: March 2026 | AR NOVALINK Billing System v2.0*
+*Generated: March 2026 |   NOVALINK Billing System v2.0*

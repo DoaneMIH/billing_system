@@ -146,9 +146,10 @@ $packages_list = $conn->query("SELECT * FROM packages WHERE status='active' ORDE
                         <div><strong>Current Balance:</strong> <span class="<?php echo $current_balance>0?'ledger-balance-positive':'ledger-balance-zero'; ?>"><?php echo format_currency($current_balance); ?></span></div>
                     </div>
                     <div class="ledger-actions">
-                        <a href="print_installation.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-primary btn-sm">🖨️ Installation Form</a>
+                        <a href="print_sketch.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-primary btn-sm">🖨️ Installation Form</a>
+                        <!-- <a href="print_installation.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-primary btn-sm">🖨️ Installation Form</a> -->
                         <a href="print_billing_statement.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-secondary btn-sm">🖨️ Billing Statement</a>
-                        <a href="print_sketch.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-sm btn-info">🖨️ Print Sketch</a>
+                        <!-- <a href="print_sketch.php?id=<?php echo $customer_id; ?>" target="_blank" class="btn btn-sm btn-info">🖨️ Print Sketch</a> -->
                     </div>
                 </div>
             </div>

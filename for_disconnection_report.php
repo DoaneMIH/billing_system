@@ -30,9 +30,10 @@ if ($area_filter > 0) {
 }
 
 $sql .= " GROUP BY c.customer_id, c.account_number, c.subscriber_name, c.address, c.tel_no, a.area_name, c.status, c.monthly_fee
-          HAVING total_balance > 0
-          ORDER BY oldest_due_date ASC";
+        HAVING total_balance > 0
+        ORDER BY oldest_due_date ASC";
 
+global $conn;
 $all_customers = $conn->query($sql);
 
 // Filter for disconnection candidates
@@ -67,7 +68,7 @@ while ($row = $all_customers->fetch_assoc()) {
 ?>
 
 <div class="report-header">
-    <h1>AR NOVALINK DIGITAL SYSTEMS CORP.</h1>
+    <h1>NOVALINK DIGITAL SYSTEMS CORP.</h1>
     <p>Customers Recommended for Disconnection</p>
     <p>As of <?php echo date('F d, Y'); ?></p>
 </div>

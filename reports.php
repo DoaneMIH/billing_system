@@ -40,7 +40,7 @@ $areas_list = $conn->query("SELECT * FROM areas ORDER BY area_name");
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Reports - AR NOVALINK</title>
+<title>Reports - NOVALINK</title>
     <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
 
 <link rel="stylesheet" href="css/style.css">

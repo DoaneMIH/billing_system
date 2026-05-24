@@ -32,14 +32,14 @@ if ($area_filter > 0) {
 }
 
 $sql .= " GROUP BY c.customer_id, c.account_number, c.subscriber_name, c.address, c.tel_no, 
-                   a.area_name, c.status, c.monthly_fee, c.date_connected
+                a.area_name, c.status, c.monthly_fee, c.date_connected
           ORDER BY last_payment_date IS NULL, last_payment_date DESC, c.subscriber_name";
 
 $customers = $conn->query($sql);
 ?>
 
 <div class="report-header">
-    <h1>AR NOVALINK DIGITAL SYSTEMS CORP.</h1>
+    <h1>NOVALINK DIGITAL SYSTEMS CORP.</h1>
     <p>Last Payment Dates Report</p>
     <p>As of <?php echo date('F d, Y'); ?></p>
 </div>

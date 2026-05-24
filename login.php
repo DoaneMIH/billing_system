@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="login-box">
             <div class="login-header">
                 <img src="images/logo.jpg" alt="NovaLink Logo" class="logo">
-                <h1>AR NOVALINK</h1>
+                <h1>NOVALINK</h1>
                 <p>Billing System</p>
             </div>
             
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             
             <div class="login-footer">
-                <p>&copy; 2026 AR NOVALINK. All rights reserved.</p>
+                <p>&copy; 2026 NOVALINK. All rights reserved.</p>
                 <p class="version">Version <?php echo APP_VERSION; ?></p>
             </div>
         </div>

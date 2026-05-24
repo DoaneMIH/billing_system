@@ -78,7 +78,7 @@ $packages = $conn->query("SELECT * FROM packages ORDER BY bandwidth_mbps");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - AR NOVALINK</title>
+    <title>Settings - NOVALINK</title>
         <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
 
     <link rel="stylesheet" href="css/style.css">
@@ -137,7 +137,7 @@ $packages = $conn->query("SELECT * FROM packages ORDER BY bandwidth_mbps");
             <div class="widget mt-3">
                 <div class="widget-header"><h2>System Information</h2></div>
                 <div class="widget-content">
-                    <div class="form-group"><strong>Application:</strong> AR NOVALINK Billing System v2.0</div>
+                    <div class="form-group"><strong>Application:</strong>   NOVALINK Billing System v2.0</div>
                     <div class="form-group"><strong>Database:</strong> ar_novalink_billing</div>
                     <div class="form-group"><strong>PHP Version:</strong> <?php echo phpversion(); ?></div>
                     <div class="form-group"><strong>Server Time:</strong> <?php echo date('F d, Y h:i:s A'); ?></div>

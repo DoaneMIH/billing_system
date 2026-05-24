@@ -61,7 +61,7 @@ $current_balance = $balance_row['total_balance'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Ledger - AR NOVALINK</title>
+    <title>Customer Ledger - NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>

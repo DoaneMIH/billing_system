@@ -147,7 +147,7 @@ $pkgs = $conn->query("SELECT * FROM packages WHERE status='active' ORDER BY pack
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
-    <title>Billings - AR NOVALINK</title>
+    <title>Billings - NOVALINK</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>

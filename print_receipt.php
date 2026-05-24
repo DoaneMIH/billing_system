@@ -41,7 +41,7 @@ if (!$payment) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Receipt - AR NOVALINK</title>
+    <title>Payment Receipt - NOVALINK</title>
         <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
 
     <style>
@@ -214,7 +214,7 @@ if (!$payment) {
     
     <div class="receipt">
         <div class="header">
-            <h1>AR NOVALINK</h1>
+            <h1>NOVALINK</h1>
             <p>Internet Service Provider</p>
             <p>Official Receipt</p>
         </div>

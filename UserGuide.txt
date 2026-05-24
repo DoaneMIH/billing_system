@@ -1,5 +1,5 @@
 ============================================================
-  AR NOVALINK BILLING SYSTEM v2.1 - USER GUIDE
+    NOVALINK BILLING SYSTEM v2.1 - USER GUIDE
   Updated Features & How-To
 ============================================================
 

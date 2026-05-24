@@ -88,7 +88,7 @@ $pending_advances=$conn->query("SELECT ap.advance_id,ap.or_number,ap.payment_dat
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Payments - AR NOVALINK</title>
+<title>Payments - NOVALINK</title>
 <link rel="shortcut icon" type="x-icon" href="images/logo.jpg">
 <link rel="stylesheet" href="css/style.css">
 </head>

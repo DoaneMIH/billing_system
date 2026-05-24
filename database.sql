@@ -1,5 +1,5 @@
 -- ================================================================
--- AR NOVALINK Billing System — Complete Database
+-- NOVALINK Billing System — Complete Database
 -- Combined: database.sql + database_include.sql + database_upgrade_v3.sql
 -- Version: 3.0 (Compatible with MySQL 5.7+)
 --
@@ -320,12 +320,12 @@ CREATE TABLE IF NOT EXISTS advance_payments (
 
 -- Default Admin User (password: admin123)
 INSERT INTO users (username, password, full_name, email, role) VALUES
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'System Administrator', 'admin@arnovalink.com', 'admin');
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'System Administrator', 'admin@novalink.com', 'admin');
 
 -- Additional Users (password: password123)
 INSERT INTO users (username, password, full_name, email, role) VALUES
-('accounting', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Rachel Catalan', 'accounting@arnovalink.com', 'accounting'),
-('cashier', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'John Balcena', 'cashier@arnovalink.com', 'cashier');
+('accounting', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Rachel Catalan', 'accounting@novalink.com', 'accounting'),
+('cashier', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'John Balcena', 'cashier@novalink.com', 'cashier');
 
 -- Sample Areas
 INSERT INTO areas (area_name, description) VALUES

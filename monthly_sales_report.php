@@ -64,7 +64,7 @@ $grand_total = 0;
 ?>
 
 <div class="report-header">
-    <h1>AR NOVALINK DIGITAL SYSTEMS CORP.</h1>
+    <h1>NOVALINK DIGITAL SYSTEMS CORP.</h1>
     <p>Monthly Sales Report</p>
     <p><?php echo get_month_name($month_filter) . ' ' . $year_filter; ?></p>
 </div>
